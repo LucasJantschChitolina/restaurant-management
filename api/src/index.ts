@@ -3,6 +3,8 @@ import cors from 'cors'
 
 import userRoutes from './routes/user';
 
+import { db } from './db';
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -20,6 +22,13 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send('Something went wrong');
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+db.$client.connect()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server running at http://localhost:${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to connect to the database:', err);
+    process.exit(1);
+  });
