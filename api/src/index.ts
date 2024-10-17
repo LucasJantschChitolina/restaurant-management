@@ -12,7 +12,7 @@ app.use(express.json());
 app.use('/user', userRoutes);
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello, TypeScript Express!');
+  res.json({ message: 'Hello, TypeScript Express!' });
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
