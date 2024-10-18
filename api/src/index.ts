@@ -22,13 +22,14 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send('Something went wrong');
 });
 
-db.$client.connect()
-  .then(() => {
+try {
+  db.authenticate().then(() => {
+    console.log('Database connected successfully');
+
     app.listen(port, () => {
       console.log(`Server running at http://localhost:${port}`);
     });
-  })
-  .catch((err) => {
-    console.error('Failed to connect to the database:', err);
-    process.exit(1);
   });
+} catch (error) {
+  console.error('Unable to connect to the database:', error);
+}

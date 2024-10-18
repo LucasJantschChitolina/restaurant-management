@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { db } from '../db';
-import { InsertUser, usersTable } from '../db/schema';
+import { User } from '../db/models/user';
 
 const router = Router();
 
@@ -17,17 +17,15 @@ router.post('/', userValidationRules, async (req: Request, res: Response) => {
     return;
   }
 
-  const user: InsertUser = {
+  const user = await User.create({
     name: req.body.name,
-  };
-
-  await db.insert(usersTable).values(user)
+  })
 
   res.status(201).json(user)
 });
 
 router.get('/', async (req: Request, res: Response) => {
-  const result = await db.query.usersTable.findMany({});
+  const result = await User.findAll();
 
   res.json({ users: result })
 })

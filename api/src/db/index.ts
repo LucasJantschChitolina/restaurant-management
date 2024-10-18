@@ -1,7 +1,6 @@
 import 'dotenv/config';
-import * as schema from './schema';
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { Sequelize } from 'sequelize'
 
-const db = drizzle(process.env.DATABASE_URL!, { schema });
+const db = new Sequelize(process.env.DATABASE_URL!)
 
 export { db }
