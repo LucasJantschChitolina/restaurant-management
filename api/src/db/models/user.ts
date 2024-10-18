@@ -9,6 +9,11 @@ const User = sequelize.define('user', {
     allowNull: false,
   },
   name: DataTypes.TEXT,
+  email: {
+    type: DataTypes.TEXT,
+    unique: true,
+  },
+  password: DataTypes.TEXT,
 });
 
 export { User };
