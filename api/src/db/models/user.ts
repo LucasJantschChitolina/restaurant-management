@@ -1,4 +1,4 @@
-import { DataTypes, Model, InferCreationAttributes, InferAttributes, CreationOptional } from "sequelize";
+import { DataTypes } from "sequelize";
 import { db as sequelize } from "../index";
 
 const User = sequelize.define('user', {
@@ -8,12 +8,19 @@ const User = sequelize.define('user', {
     primaryKey: true,
     allowNull: false,
   },
-  name: DataTypes.TEXT,
+  name: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
   email: {
     type: DataTypes.TEXT,
     unique: true,
+    allowNull: false,
   },
-  password: DataTypes.TEXT,
+  password: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
 });
 
 export { User };
