@@ -1,12 +1,13 @@
 import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import { db } from '../db';
 import { User } from '../db/models/user';
 
 const router = Router();
 
 const userValidationRules = [
   body('name').notEmpty().withMessage('Name is required'),
+  body('email').isEmail().withMessage('Email is required'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
 ];
 
 router.post('/', userValidationRules, async (req: Request, res: Response) => {
@@ -19,6 +20,8 @@ router.post('/', userValidationRules, async (req: Request, res: Response) => {
 
   const user = await User.create({
     name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
   })
 
   res.status(201).json(user)
