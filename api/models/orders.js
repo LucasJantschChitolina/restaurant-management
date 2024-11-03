@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     waiterId: {
       type: DataTypes.UUID,
       references: {
-        model: 'users',
+        model: 'user',
         key: 'id',
       },
     },

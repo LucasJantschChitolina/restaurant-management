@@ -1,4 +1,5 @@
 'use strict';
+const DataTypes = require("sequelize")
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -22,7 +23,7 @@ module.exports = {
       waiterId: {
         type: DataTypes.UUID,
         references: {
-          model: 'users',
+          model: 'user',
           key: 'id',
         },
       },
