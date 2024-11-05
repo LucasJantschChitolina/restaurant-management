@@ -1,8 +1,13 @@
 import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import { User } from '../db/models/user';
+import { Sequelize, DataTypes } from 'sequelize';
 
 const router = Router();
+const sequelize = new Sequelize('database', 'username', 'password', {
+  host: 'localhost',
+  dialect: 'postgres'
+});
+const User = require('../../models/User')(sequelize, DataTypes);
 
 const userValidationRules = [
   body('name').notEmpty().withMessage('Name is required'),
@@ -17,7 +22,6 @@ router.post('/', userValidationRules, async (req: Request, res: Response) => {
     res.status(400).json({ errors: errors.array() });
     return;
   }
-
   const user = await User.create({
     name: req.body.name,
     email: req.body.email,
