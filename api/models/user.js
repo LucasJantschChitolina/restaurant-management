@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'User', // Note que aqui estou usando 'User' com "U" maiúsculo para seguir as boas práticas
+    modelName: 'User',
   });
   return User;
 };
