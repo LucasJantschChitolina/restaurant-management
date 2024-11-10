@@ -1,0 +1,23 @@
+meta {
+  name: Get Users
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:4000/user
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImMyNjBhZGNjLWYwYTEtNDI0MS1hZGUzLWVlOWY0YmUwMDk5MSIsImVtYWlsIjoibWFudUBleGFtcGxlLmNvbSIsImlhdCI6MTczMTI2MDYxOCwiZXhwIjoxNzMxMjY0MjE4fQ.IyXPBmoN7yXBbhybABJrakb24mi4PP1Wp3UKKmnJ-uo
+}
+
+body:json {
+  {
+    "name": "Lucas Doe",
+    "email": "lucas@example.com",
+    "password": "securepassword"
+  }
+}
