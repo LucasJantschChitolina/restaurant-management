@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors'
 
 import userRoutes from './routes/user';
+import loginRoutes from './routes/login';
 
 import sequelize from './db';
 
@@ -11,7 +12,9 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 
 app.use(express.json());
+
 app.use('/user', userRoutes);
+app.use('/login', loginRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello, TypeScript Express!' });

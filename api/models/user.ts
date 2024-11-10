@@ -44,6 +44,7 @@ export default (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'User',
+      tableName: 'user',
     }
   );
 

@@ -2,8 +2,9 @@ import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import sequelize from '../db';
 import initUser from '../../models/user';
+import generateHash from '../utils/hash';
 
-const User = initUser(sequelize); // Initialize the User model
+const User = initUser(sequelize);
 
 const router = Router();
 
@@ -21,10 +22,28 @@ router.post('/', userValidationRules, async (req: Request, res: Response) => {
     return;
   }
 
+  const alreadyExistsUser = await User.findOne({
+    where: {
+      email: req.body.email,
+    }
+  })
+
+  if (alreadyExistsUser) {
+    res.status(400).json({ error: 'User already exists' });
+    return;
+  }
+
+  const hash = generateHash(req.body.password);
+
+  if (!hash) {
+    res.status(500).json({ error: 'Internal Server Error' });
+    return;
+  }
+
   const user = await User.create({
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password,
+    password: hash,
   });
 
   res.status(201).json(user);
