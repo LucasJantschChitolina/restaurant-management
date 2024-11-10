@@ -3,7 +3,7 @@ import cors from 'cors'
 
 import userRoutes from './routes/user';
 
-import { db } from './db';
+import sequelize from './db';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -23,7 +23,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 try {
-  db.authenticate().then(() => {
+  sequelize.authenticate().then(() => {
     console.log('Database connected successfully');
 
     app.listen(port, () => {
