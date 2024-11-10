@@ -3,7 +3,7 @@ import cors from 'cors';
 import sequelize from './db';
 
 import signUpRoutes from './routes/public/sign-up';
-import loginRoutes from './routes/public/login';
+import signInRoutes from './routes/public/sign-in';
 import userRoutes from './routes/private/user'
 
 import authenticateToken from './middleware/auth';
@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // Public routes
-app.use('/login', loginRoutes);
+app.use('/sign-in', signInRoutes);
 app.use('/sign-up', signUpRoutes);
 
 // Private routes
