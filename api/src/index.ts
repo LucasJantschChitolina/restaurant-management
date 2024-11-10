@@ -1,20 +1,27 @@
-import express, { NextFunction, Request, Response } from 'express';
-import cors from 'cors'
-
-import userRoutes from './routes/user';
-import loginRoutes from './routes/login';
-
+import express, { Request, Response, NextFunction, RequestHandler } from 'express';
+import cors from 'cors';
 import sequelize from './db';
+
+import signUpRoutes from './routes/public/sign-up';
+import loginRoutes from './routes/public/login';
+import userRoutes from './routes/private/user'
+
+import authenticateToken from './middleware/auth';
 
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(cors());
-
 app.use(express.json());
 
-app.use('/user', userRoutes);
+// Public routes
 app.use('/login', loginRoutes);
+app.use('/sign-up', signUpRoutes);
+
+// Private routes
+app.use(authenticateToken as RequestHandler);
+
+app.use('/user', userRoutes)
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello, TypeScript Express!' });

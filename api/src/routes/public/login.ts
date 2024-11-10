@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
-import sequelize from '../db';
-import initUser from '../../models/user';
+import sequelize from '../../db';
+import initUser from '../../../models/user';
 import jwt from 'jsonwebtoken';
-import generateHash from '../utils/hash';
+import generateHash from '../../utils/hash';
 
 const User = initUser(sequelize);
 

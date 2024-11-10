@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import sequelize from '../db';
-import initUser from '../../models/user';
-import generateHash from '../utils/hash';
+import sequelize from '../../db';
+import initUser from '../../../models/user';
+import generateHash from '../../utils/hash';
 
 const User = initUser(sequelize);
 
@@ -46,13 +46,7 @@ router.post('/', userValidationRules, async (req: Request, res: Response) => {
     password: hash,
   });
 
-  res.status(201).json(user);
-});
-
-router.get('/', async (req: Request, res: Response) => {
-  const result = await User.findAll();
-
-  res.json({ users: result });
+  res.status(201).json({ id: user.id, name: user.name, email: user.email });
 });
 
 export default router;
