@@ -21,7 +21,7 @@ function FacebookRepos() {
     <div>
       <h1>Facebook Organization Repositories</h1>
       <ul>
-        {data.map(repo => (
+        {data.map((repo: any) => (
           <li key={repo.id}>
             <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
               {repo.name}
