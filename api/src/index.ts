@@ -1,17 +1,27 @@
-import express, { NextFunction, Request, Response } from 'express';
-import cors from 'cors'
+import express, { Request, Response, NextFunction, RequestHandler } from 'express';
+import cors from 'cors';
+import sequelize from './db';
 
-import userRoutes from './routes/user';
+import signUpRoutes from './routes/public/sign-up';
+import signInRoutes from './routes/public/sign-in';
+import userRoutes from './routes/private/user'
 
-import { db } from './db';
+import authenticateToken from './middleware/auth';
 
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(cors());
-
 app.use(express.json());
-app.use('/user', userRoutes);
+
+// Public routes
+app.use('/sign-in', signInRoutes);
+app.use('/sign-up', signUpRoutes);
+
+// Private routes
+app.use(authenticateToken as RequestHandler);
+
+app.use('/user', userRoutes)
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello, TypeScript Express!' });
@@ -23,7 +33,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 try {
-  db.authenticate().then(() => {
+  sequelize.authenticate().then(() => {
     console.log('Database connected successfully');
 
     app.listen(port, () => {
