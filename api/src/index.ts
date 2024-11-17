@@ -4,7 +4,8 @@ import sequelize from './db';
 
 import signUpRoutes from './routes/public/sign-up';
 import signInRoutes from './routes/public/sign-in';
-import userRoutes from './routes/private/user'
+import userRoutes from './routes/private/user';
+import menuItemRoutes from './routes/private/menuItem';
 
 import authenticateToken from './middleware/auth';
 
@@ -22,6 +23,7 @@ app.use('/sign-up', signUpRoutes);
 app.use(authenticateToken as RequestHandler);
 
 app.use('/user', userRoutes)
+app.use('/menu-item', menuItemRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello, TypeScript Express!' });
