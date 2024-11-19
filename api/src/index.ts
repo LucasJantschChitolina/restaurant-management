@@ -6,6 +6,7 @@ import signUpRoutes from './routes/public/sign-up';
 import signInRoutes from './routes/public/sign-in';
 import userRoutes from './routes/private/user';
 import menuItemRoutes from './routes/private/menuItem';
+import order from './routes/private/orders';
 
 import authenticateToken from './middleware/auth';
 
@@ -24,6 +25,7 @@ app.use(authenticateToken as RequestHandler);
 
 app.use('/user', userRoutes)
 app.use('/menu-item', menuItemRoutes);
+app.use('/order', order);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello, TypeScript Express!' });

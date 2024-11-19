@@ -1,24 +1,28 @@
 import { Model, DataTypes, Sequelize, UUIDV4 } from 'sequelize';
 
-interface OrderAttributes {
+export interface OrderAttributes {
   id?: string;
   tableNumber: number;
   customer: string;
-  status: number;
+  status: string;
   waiterId: string;
-  openedAt: Date;
+  openedAt?: Date;
   closedAt?: Date;
   totalAmount?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
+export type OrderCreationAttributes = Omit<OrderAttributes, 'id' | 'createdAt' | 'updatedAt' | 'openedAt' | 'totalAmount'>;
+
+export type OrderUpdateAttributes = Omit<OrderAttributes, 'id' | 'createdAt' | 'updatedAt' | 'openedAt'>;
+
 export default (sequelize: Sequelize) => {
   class Order extends Model<OrderAttributes> implements OrderAttributes {
     public id!: string;
     public tableNumber!: number;
     public customer!: string;
-    public status!: number;
+    public status!: string;
     public waiterId!: string;
     public openedAt!: Date;
     public closedAt?: Date;
@@ -50,7 +54,7 @@ export default (sequelize: Sequelize) => {
         allowNull: false,
       },
       status: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       waiterId: {

@@ -1,0 +1,20 @@
+meta {
+  name: Update Order
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://localhost:4000/order/c850203e-7f6e-414d-807d-b8489fee4bdd
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "tableNumber": 5,
+    "customer": "Jane Doe",
+    "status": "closed",
+    "waiterId": "c260adcc-f0a1-4241-ade3-ee9f4be00991"
+  }
+}
