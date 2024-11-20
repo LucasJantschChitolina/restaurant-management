@@ -7,11 +7,15 @@ import {
   findOrderByTableNumberAndStatus,
 } from '../repositories/ordersRepository';
 
-import { OrderAttributes } from '../../../../models/orders';
+import { OrderAttributes, OrderStatus } from '../../../../models/orders';
 
 export const createOrderService = async (data: OrderAttributes) => {
   if (!data.tableNumber || !data.customer || !data.status || !data.waiterId) {
     throw new Error('Invalid order data');
+  }
+
+  if (!data.status === OrderStatus.OPENED) {
+    throw new Error('Invalid order status');
   }
 
   const existingOrder = await findOrderByTableNumberAndStatus(data.tableNumber, 'opened');

@@ -7,6 +7,8 @@ import signInRoutes from './modules/auth/routes/sign-in';
 import userRoutes from './modules/auth/routes/user';
 import menuItemRoutes from './modules/menu-item/routes/menuItem';
 import orderRoutes from './modules/order/routes/orders';
+import productionOrderRoutes from './modules/production-order/routes/productionOrderRoutes';
+
 
 import authenticateToken from './middlewares/auth';
 
@@ -26,6 +28,7 @@ app.use(authenticateToken as RequestHandler);
 app.use('/user', userRoutes)
 app.use('/menu-item', menuItemRoutes);
 app.use('/order', orderRoutes);
+app.use('/production-order', productionOrderRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello, TypeScript Express!' });

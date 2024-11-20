@@ -17,6 +17,11 @@ export type OrderCreationAttributes = Omit<OrderAttributes, 'id' | 'createdAt' |
 
 export type OrderUpdateAttributes = Omit<OrderAttributes, 'id' | 'createdAt' | 'updatedAt' | 'openedAt'>;
 
+export enum OrderStatus {
+  OPENED = 'opened',
+  CLOSED = 'closed',
+}
+
 export default (sequelize: Sequelize) => {
   class Order extends Model<OrderAttributes> implements OrderAttributes {
     public id!: string;
