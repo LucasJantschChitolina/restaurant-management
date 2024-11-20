@@ -1,9 +1,7 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, Image } from 'react-native';
+import { Button, XStack, YStack, H1, Text, Separator, Card, Paragraph, Input } from 'tamagui';
 
-import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 
 export default function HomeScreen() {
   return (
@@ -15,37 +13,79 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
+      <YStack padding="$4" space="$4">
+        <H1>Tamagui UI Showcase</H1>
+        <Text theme="alt1">Welcome to our Tamagui implementation!</Text>
+
+   
+        <Card bordered padding="$4" space="$3">
+          <Text theme="alt2">Buttons</Text>
+          <Separator />
+          <XStack space="$2">
+            <Button>Default</Button>
+            <Button theme="alt1">Alt Theme</Button>
+            <Button variant="outlined">Outlined</Button>
+          </XStack>
+        </Card>
+
+        <Card bordered padding="$4" space="$3">
+          <Text theme="alt2">Input Fields</Text>
+          <Separator />
+          <YStack space="$2">
+            <Input placeholder="Default input" />
+            <Input
+              theme="alt1"
+              placeholder="Themed input"
+              borderWidth={2}
+            />
+          </YStack>
+        </Card>
+
+        <Card bordered padding="$4" elevate size="$4">
+          <Card.Header>
+            <H1>Card Title</H1>
+          </Card.Header>
+          <Paragraph size="$2" theme="alt2">
+            This is a card component with header and content.
+            Cards are useful for grouping related information.
+          </Paragraph>
+          <XStack marginTop="$2">
+            <Button size="$3" theme="alt2">Learn More</Button>
+          </XStack>
+        </Card>
+
+        <Card bordered padding="$4" space="$3">
+          <Text theme="alt2">Layout Examples</Text>
+          <Separator />
+          <XStack space="$2" flexWrap="wrap">
+            <YStack
+              backgroundColor="$background"
+              borderRadius="$4"
+              padding="$2"
+              borderWidth={1}
+              borderColor="$borderColor"
+            >
+              <Text>YStack</Text>
+            </YStack>
+            <XStack
+              backgroundColor="$background"
+              borderRadius="$4"
+              padding="$2"
+              borderWidth={1}
+              borderColor="$borderColor"
+            >
+              <Text>XStack</Text>
+            </XStack>
+          </XStack>
+        </Card>
+
+        <Card bordered padding="$4">
+          <Text theme="alt2">Platform: {Platform.OS}</Text>
+          <Paragraph size="$2">
+            Press {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })} for dev menu
+          </Paragraph>
+        </Card>
+      </YStack>
     </ParallaxScrollView>
   );
 }
@@ -55,10 +95,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
   },
   reactLogo: {
     height: 178,
