@@ -1,5 +1,5 @@
-import OrderModel, { OrderCreationAttributes, OrderUpdateAttributes } from '../../models/orders';
-import sequelize from '../db';
+import OrderModel, { OrderCreationAttributes, OrderUpdateAttributes } from '../../../../models/orders';
+import sequelize from '../../../db';
 
 const Order = OrderModel(sequelize);
 

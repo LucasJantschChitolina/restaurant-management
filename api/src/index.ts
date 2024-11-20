@@ -2,13 +2,13 @@ import express, { Request, Response, NextFunction, RequestHandler } from 'expres
 import cors from 'cors';
 import sequelize from './db';
 
-import signUpRoutes from './routes/public/sign-up';
-import signInRoutes from './routes/public/sign-in';
-import userRoutes from './routes/private/user';
-import menuItemRoutes from './routes/private/menuItem';
-import order from './routes/private/orders';
+import signUpRoutes from './modules/auth/routes/sign-up';
+import signInRoutes from './modules/auth/routes/sign-in';
+import userRoutes from './modules/auth/routes/user';
+import menuItemRoutes from './modules/menu-item/routes/menuItem';
+import orderRoutes from './modules/order/routes/orders';
 
-import authenticateToken from './middleware/auth';
+import authenticateToken from './middlewares/auth';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -25,7 +25,7 @@ app.use(authenticateToken as RequestHandler);
 
 app.use('/user', userRoutes)
 app.use('/menu-item', menuItemRoutes);
-app.use('/order', order);
+app.use('/order', orderRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello, TypeScript Express!' });

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import sequelize from '../../db';
-import initUser from '../../../models/user';
+import sequelize from '../../../db';
+import initUser from '../../../../models/user';
 
 const User = initUser(sequelize);
 

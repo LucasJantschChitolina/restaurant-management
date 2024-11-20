@@ -1,5 +1,5 @@
-import MenuItemModel from '../../models/menuItem';
-import sequelize from '../db';
+import MenuItemModel from '../../../../models/menuItem';
+import sequelize from '../../../db';
 
 const MenuItem = MenuItemModel(sequelize);
 

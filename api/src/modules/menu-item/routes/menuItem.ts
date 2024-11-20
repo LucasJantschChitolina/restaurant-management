@@ -5,7 +5,7 @@ import {
   updateMenuItemController,
   deleteMenuItemController,
   listMenuItemsController,
-} from '../../controllers/menuItemController';
+} from '../controllers/menuItemController';
 
 const router = Router();
 

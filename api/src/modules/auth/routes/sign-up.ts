@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import sequelize from '../../db';
-import initUser from '../../../models/user';
-import generateHash from '../../utils/hash';
+import sequelize from '../../../db';
+import initUser from '../../../../models/user';
+import generateHash from '../utils/hash';
 
 const User = initUser(sequelize);
 
