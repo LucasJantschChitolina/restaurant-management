@@ -6,13 +6,27 @@ import {
   deleteMenuItemController,
   listMenuItemsController,
 } from '../controllers/menuItemController';
+import { validateRequest } from '../../../middlewares/validation';
+import { z } from 'zod';
+import { MenuItemCategory } from '../../../../models/menu-item';
 
 const router = Router();
 
-router.post('/', createMenuItemController);
+const menuItemSchema = z.object({
+  description: z.string().nonempty({ message: 'Description is required' }),
+  price: z.number().positive({ message: 'Price must be greater than 0' }),
+  category: z.nativeEnum(MenuItemCategory, { errorMap: () => ({ message: `Invalid menu item category, must be one of: ${Object.values(MenuItemCategory).join(', ')}` }) }),
+});
+
+const updateMenuItemSchema = z.object({
+  description: z.string().optional(),
+  price: z.number().positive({ message: 'Price must be greater than 0' }).optional(),
+});
+
+router.post('/', validateRequest(menuItemSchema), createMenuItemController);
 router.get('/', listMenuItemsController);
 router.get('/:id', getMenuItemController);
-router.put('/:id', updateMenuItemController);
+router.put('/:id', validateRequest(updateMenuItemSchema), updateMenuItemController);
 router.delete('/:id', deleteMenuItemController);
 
 export default router;
