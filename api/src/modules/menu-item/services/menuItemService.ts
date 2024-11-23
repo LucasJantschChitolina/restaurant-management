@@ -1,3 +1,4 @@
+import { MenuItemCategory } from '../../../../models/menu-item';
 import {
   createMenuItem,
   getMenuItemById,
@@ -6,10 +7,15 @@ import {
   listMenuItems,
 } from '../repositories/menuItemRepository';
 
-export const createMenuItemService = async (data: { description: string; price: number }) => {
-  if (!data.description || data.price <= 0) {
+export const createMenuItemService = async (data: { description: string; price: number, category: MenuItemCategory }) => {
+  if (!data.description || data.price <= 0 || !data.category) {
     throw new Error('Invalid menu item data');
   }
+
+  if (!Object.values(MenuItemCategory).includes(data.category)) {
+    throw new Error(`Invalid menu item category, must be one of: ${Object.values(MenuItemCategory).join(', ')}`);
+  }
+
   return await createMenuItem(data);
 };
 

@@ -1,9 +1,9 @@
-import MenuItemModel from '../../../../models/menu-item';
+import MenuItemModel, { MenuItemCategory } from '../../../../models/menu-item';
 import sequelize from '../../../db';
 
 const MenuItem = MenuItemModel(sequelize);
 
-export const createMenuItem = async (data: { description: string; price: number }) => {
+export const createMenuItem = async (data: { description: string; price: number, category: MenuItemCategory }) => {
   return await MenuItem.create(data);
 };
 

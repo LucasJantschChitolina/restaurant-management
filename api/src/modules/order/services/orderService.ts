@@ -14,8 +14,8 @@ export const createOrderService = async (data: OrderAttributes) => {
     throw new Error('Invalid order data');
   }
 
-  if (!data.status === OrderStatus.OPENED) {
-    throw new Error('Invalid order status');
+  if (data.status !== OrderStatus.OPENED) {
+    throw new Error(`Invalid order status. The order must be ${OrderStatus.OPENED} when created`);
   }
 
   const existingOrder = await findOrderByTableNumberAndStatus(data.tableNumber, 'opened');

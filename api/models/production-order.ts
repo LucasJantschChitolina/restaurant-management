@@ -4,6 +4,7 @@ export interface ProductionOrderAttributes {
   id?: string;
   orderId: string;
   status: string;
+  type: string;
   orderItemId: string;
 }
 export type ProductionOrderCreationAttributes = Omit<ProductionOrderAttributes, 'id'>;
@@ -17,11 +18,17 @@ export enum ProductionOrderStatus {
   COMPLETED = 'COMPLETED',
 }
 
+export enum ProductionOrderType {
+  KITCHEN = 'KITCHEN',
+  BAR = 'BAR',
+}
+
 export default (sequelize: Sequelize) => {
   class ProductionOrder extends Model<ProductionOrderAttributes> implements ProductionOrderAttributes {
     public id!: string;
     public orderId!: string;
     public status!: string;
+    public type!: string;
     public orderItemId!: string;
 
     static associate(models: any) {
@@ -42,6 +49,10 @@ export default (sequelize: Sequelize) => {
         allowNull: false,
       },
       status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      type: {
         type: DataTypes.STRING,
         allowNull: false,
       },

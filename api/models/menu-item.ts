@@ -4,6 +4,12 @@ interface MenuItemAttributes {
   id?: string;
   description: string;
   price: number;
+  category: string;
+}
+
+export enum MenuItemCategory {
+  FOOD = 'FOOD',
+  DRINK = 'DRINK',
 }
 
 export default (sequelize: Sequelize) => {
@@ -11,6 +17,7 @@ export default (sequelize: Sequelize) => {
     public id!: string;
     public description!: string;
     public price!: number;
+    public category!: string;
 
     static associate(models: any) {
       // define association here
@@ -33,6 +40,10 @@ export default (sequelize: Sequelize) => {
         type: DataTypes.DECIMAL,
         allowNull: false,
       },
+      category: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      }
     },
     {
       sequelize,
