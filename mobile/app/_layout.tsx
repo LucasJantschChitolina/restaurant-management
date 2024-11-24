@@ -34,9 +34,9 @@ export default function RootLayout() {
   return (
     <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
       <QueryClientProvider client={queryClient}>
-    <SessionProvider>
-      <Slot />
-    </SessionProvider>
+        <SessionProvider>
+          <Slot />
+        </SessionProvider>
       </QueryClientProvider>
     </TamaguiProvider>
   );

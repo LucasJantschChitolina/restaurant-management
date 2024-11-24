@@ -31,7 +31,6 @@ export function SessionProvider(props: React.PropsWithChildren) {
         <AuthContext.Provider
             value={{
                 signIn: async (email, password) => {
-                    console.log('signing in', email, password);
                     try {
                         const loginResponse = await fetch("http://localhost:4000/sign-in", {
                             method: "POST",
