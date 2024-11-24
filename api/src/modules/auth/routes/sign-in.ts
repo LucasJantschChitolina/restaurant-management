@@ -33,7 +33,7 @@ router.post('/', async (req: Request, res: Response) => {
     expiresIn: '10h',
   });
 
-  res.json(token);
+  res.status(200).json({ token });
 });
 
 export default router;
