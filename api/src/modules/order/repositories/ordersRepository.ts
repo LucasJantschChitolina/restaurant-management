@@ -28,10 +28,13 @@ export const updateOrderValue = async (id: string, value: number) => {
   return await order.save();
 }
 
-export const updateOrderStatus = async (id: string, status: OrderStatus.CLOSED) => {
+export const closeOrder = async (id: string) => {
   const order = await Order.findByPk(id);
   if (!order) return null;
-  order.status = status;
+
+  order.status = OrderStatus.CLOSED;
+  order.closedAt = new Date();
+
   return await order.save();
 }
 

@@ -6,7 +6,7 @@ import {
   listOrders,
   getWaiterById,
   updateOrderValue,
-  updateOrderStatus,
+  closeOrder,
 } from '../repositories/ordersRepository';
 
 import { OrderAttributes, OrderStatus } from '../../../../models/orders';
@@ -28,9 +28,7 @@ export const closeOrderService = async (id: string) => {
     throw new Error('Order not found');
   }
 
-  order.status = OrderStatus.CLOSED;
-
-  const updatedOrder = await updateOrderStatus(id, OrderStatus.CLOSED);
+  const updatedOrder = await closeOrder(id);
 
   return updatedOrder;
 };

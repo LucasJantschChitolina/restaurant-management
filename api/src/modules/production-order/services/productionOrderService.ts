@@ -6,7 +6,8 @@ import {
   updateProductionOrder,
 } from '../repositories/productionOrderRepository';
 
-import { ProductionOrderStatus, ProductionOrderUpdateAttributes } from '../../../../models/production-order';
+import { OrderStatus } from '../../../../models/orders';
+import { ProductionOrderUpdateAttributes } from '../../../../models/production-order';
 import { getMenuItemById } from '../../menu-item/repositories/menuItemRepository';
 import { createOrderItemService } from '../../order-item/services/orderItemService';
 import { increaseOrderValueService } from '../../order/services/orderService';
@@ -18,18 +19,20 @@ interface CreateProductionOrderProps {
 }
 
 export const createProductionOrderService = async (data: CreateProductionOrderProps) => {
-  if (!data.orderId || !data.status || !data.menuItemId) {
-    throw new Error('Invalid production order data');
-  }
-
-  if (data.status !== ProductionOrderStatus.PENDING) {
-    throw new Error(`Invalid production order status. The production order must be ${ProductionOrderStatus.PENDING} when created`);
-  }
-
   const menuItem = await getMenuItemById(data.menuItemId);
 
   if (!menuItem) {
     throw new Error('Menu item not found');
+  }
+
+  const order = await getProductionOrderById(data.orderId);
+
+  if (!order) {
+    throw new Error('Order not found');
+  }
+
+  if (order.status !== OrderStatus.OPENED) {
+    throw new Error('Order is not opened');
   }
 
   const orderItem = await createOrderItemService({
