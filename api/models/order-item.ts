@@ -19,9 +19,9 @@ export default (sequelize: Sequelize) => {
     public updatedAt!: Date;
 
     static associate(models: any) {
-      // define association here
       OrderItem.belongsTo(models.MenuItem, { foreignKey: 'menuItemId', as: 'menuItem' });
       OrderItem.belongsTo(models.Order, { foreignKey: 'orderId', as: 'order' });
+      OrderItem.belongsTo(models.ProductionOrder, { foreignKey: 'orderId', as: 'productionOrder' });
     }
   }
 

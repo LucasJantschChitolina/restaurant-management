@@ -1,7 +1,11 @@
-import OrderModel, { OrderCreationAttributes, OrderUpdateAttributes } from '../../../../models/orders';
 import sequelize from '../../../db';
 
+import OrderModel, { OrderCreationAttributes, OrderStatus, OrderUpdateAttributes } from '../../../../models/orders';
+
+import UserModel from '../../../../models/user';
+
 const Order = OrderModel(sequelize);
+const User = UserModel(sequelize);
 
 export const createOrder = async (data: OrderCreationAttributes) => {
   return await Order.create(data);
@@ -17,6 +21,20 @@ export const updateOrder = async (id: string, data: OrderUpdateAttributes) => {
   return await order.update(data);
 };
 
+export const updateOrderValue = async (id: string, value: number) => {
+  const order = await Order.findByPk(id);
+  if (!order) return null;
+  order.totalAmount = value;
+  return await order.save();
+}
+
+export const updateOrderStatus = async (id: string, status: OrderStatus.CLOSED) => {
+  const order = await Order.findByPk(id);
+  if (!order) return null;
+  order.status = status;
+  return await order.save();
+}
+
 export const deleteOrder = async (id: string) => {
   const order = await Order.findByPk(id);
   if (!order) return false;
@@ -28,11 +46,7 @@ export const listOrders = async () => {
   return await Order.findAll();
 };
 
-export const findOrderByTableNumberAndStatus = async (tableNumber: number, status: string) => {
-  return await Order.findOne({
-    where: {
-      tableNumber,
-      status,
-    },
-  });
+// TODO: Implement the following function in the usersRepository.ts file
+export const getWaiterById = async (id: string) => {
+  return await User.findByPk(id);
 };

@@ -9,6 +9,7 @@ import {
 import { ProductionOrderStatus, ProductionOrderUpdateAttributes } from '../../../../models/production-order';
 import { getMenuItemById } from '../../menu-item/repositories/menuItemRepository';
 import { createOrderItemService } from '../../order-item/services/orderItemService';
+import { increaseOrderValueService } from '../../order/services/orderService';
 
 interface CreateProductionOrderProps {
   orderId: string;
@@ -35,6 +36,8 @@ export const createProductionOrderService = async (data: CreateProductionOrderPr
     menuItemId: data.menuItemId,
     orderId: data.orderId
   })
+
+  await increaseOrderValueService(data.orderId, menuItem.price);
 
   return await createProductionOrder({
     orderId: data.orderId,

@@ -4,27 +4,49 @@ import {
   updateOrder,
   deleteOrder,
   listOrders,
-  findOrderByTableNumberAndStatus,
+  getWaiterById,
+  updateOrderValue,
+  updateOrderStatus,
 } from '../repositories/ordersRepository';
 
 import { OrderAttributes, OrderStatus } from '../../../../models/orders';
 
 export const createOrderService = async (data: OrderAttributes) => {
-  if (!data.tableNumber || !data.customer || !data.status || !data.waiterId) {
-    throw new Error('Invalid order data');
-  }
+  const validWaiter = await getWaiterById(data.waiterId);
 
-  if (data.status !== OrderStatus.OPENED) {
-    throw new Error(`Invalid order status. The order must be ${OrderStatus.OPENED} when created`);
-  }
-
-  const existingOrder = await findOrderByTableNumberAndStatus(data.tableNumber, 'opened');
-
-  if (existingOrder) {
-    throw new Error('Table is already open');
+  if (!validWaiter) {
+    throw new Error('Waiter not found');
   }
 
   return await createOrder(data);
+};
+
+export const closeOrderService = async (id: string) => {
+  const order = await getOrderById(id);
+
+  if (!order) {
+    throw new Error('Order not found');
+  }
+
+  order.status = OrderStatus.CLOSED;
+
+  const updatedOrder = await updateOrderStatus(id, OrderStatus.CLOSED);
+
+  return updatedOrder;
+};
+
+export const increaseOrderValueService = async (id: string, menuItemPrice: number) => {
+  const order = await getOrderById(id);
+
+  if (!order) {
+    throw new Error('Order not found');
+  }
+
+  order.totalAmount = Number(order.totalAmount || 0) + Number(menuItemPrice);
+
+  const updatedOrder = await updateOrderValue(id, order.totalAmount);
+
+  return updatedOrder;
 };
 
 export const getOrderByIdService = async (id: string) => {

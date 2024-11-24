@@ -32,7 +32,7 @@ export default (sequelize: Sequelize) => {
     public orderItemId!: string;
 
     static associate(models: any) {
-      // define association here
+      ProductionOrder.hasMany(models.OrderItem, { foreignKey: 'orderId', as: 'orderItems' });
     }
   }
 
@@ -47,6 +47,10 @@ export default (sequelize: Sequelize) => {
       orderId: {
         type: DataTypes.UUID,
         allowNull: false,
+        references: {
+          model: 'Order',
+          key: 'id',
+        },
       },
       status: {
         type: DataTypes.STRING,
