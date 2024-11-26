@@ -15,7 +15,13 @@ export const unstable_settings = {
   initialRouteName: "login",
 };
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -32,11 +38,11 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
+    <TamaguiProvider config={tamaguiConfig} defaultTheme="light">
       <QueryClientProvider client={queryClient}>
-    <SessionProvider>
-      <Slot />
-    </SessionProvider>
+        <SessionProvider>
+          <Slot />
+        </SessionProvider>
       </QueryClientProvider>
     </TamaguiProvider>
   );

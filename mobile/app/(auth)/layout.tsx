@@ -1,8 +1,7 @@
-import { Redirect, router, Stack } from 'expo-router';
-import * as Linking from 'expo-linking';
+import { router, Stack } from 'expo-router';
 
-import { useSession } from '../context';
 import { Text } from 'react-native';
+import { useSession } from '../context';
 
 export default function AppLayout() {
   const { session, isLoading } = useSession();
@@ -10,9 +9,9 @@ export default function AppLayout() {
   if (isLoading) {
     return <Text>Loading...</Text>;
   }
-console.log({session});
-  if(!session){
-   return router.push("/login");
+
+  if (!session) {
+    return router.push("/login");
   }
 
   return (

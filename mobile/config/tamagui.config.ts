@@ -7,8 +7,8 @@ const tamaguiConfig = createTamagui({
     ...config.themes,
     light: {
       ...config.themes.light,
-      background: '#ffffff',
-      color: '#000000'
+      background: '#F3F4F6',
+      color: '#212427'
     },
     dark: {
       ...config.themes.dark,
@@ -16,12 +16,12 @@ const tamaguiConfig = createTamagui({
       color: '#ffffff'
     }
   },
-  defaultTheme: 'dark'
+  defaultTheme: 'light'
 })
 
 export type Conf = typeof tamaguiConfig
 declare module '@tamagui/core' {
-  interface TamaguiCustomConfig extends Conf {}
+  interface TamaguiCustomConfig extends Conf { }
 }
 
 export default tamaguiConfig 

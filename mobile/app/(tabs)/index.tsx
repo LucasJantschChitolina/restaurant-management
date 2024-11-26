@@ -1,47 +1,30 @@
-import { Button, StyleSheet } from "react-native";
+import { router } from 'expo-router';
+import React from 'react';
+import { Button, Text, View, YStack } from 'tamagui';
+import { useSession } from '../context';
 
-import { Redirect } from "expo-router";
-import { Text, View } from "react-native";
-import { useSession } from "../context";
+export default function PageOneScreen() {
+  const { signOut } = useSession();
 
-export default function TabOneScreen() {
-  const { signOut, session } = useSession();
-
-  if (!session) {
-    return <Redirect href="/login" />;
-  }
+  const handleCreateOrder = () => {
+    // @ts-ignore
+    router.push("/order")
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <Text>Welcome, {session}</Text>
-      <View
-        style={styles.separator}
-      />
-      <Text>Edit screen info</Text>
-      <Button
-        title="Sign Out"
-        onPress={() => {
-          signOut();
-        }}
-      />
-    </View>
+    <YStack
+      flex={1}
+      padding="$4"
+      backgroundColor="$background"
+    >
+      <View w="$10">
+        <Button onPress={handleCreateOrder}>
+          <Text>Create Order</Text>
+        </Button>
+        <Button onPress={signOut}>
+          <Text>Sign Out</Text>
+        </Button>
+      </View>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-});
