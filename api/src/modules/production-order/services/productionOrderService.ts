@@ -11,6 +11,7 @@ import { ProductionOrderUpdateAttributes } from '../../../../models/production-o
 import { getMenuItemById } from '../../menu-item/repositories/menuItemRepository';
 import { createOrderItemService } from '../../order-item/services/orderItemService';
 import { increaseOrderValueService } from '../../order/services/orderService';
+import { getOrderById } from '../../order/repositories/ordersRepository';
 
 interface CreateProductionOrderProps {
   orderId: string;
@@ -25,7 +26,7 @@ export const createProductionOrderService = async (data: CreateProductionOrderPr
     throw new Error('Menu item not found');
   }
 
-  const order = await getProductionOrderById(data.orderId);
+  const order = await getOrderById(data.orderId);
 
   if (!order) {
     throw new Error('Order not found');
