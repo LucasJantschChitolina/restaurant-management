@@ -200,7 +200,7 @@ const Order = () => {
         />
       ) : (
         <>
-          <XStack alignItems="center" justifyContent="space-between" padding="$4">
+          <XStack alignItems="center" justifyContent="space-between" paddingVertical="$4">
             <Text fontSize="$8" fontWeight="$16">Comanda</Text>
             <Button color="$red10" onPress={handleCancelOrder}>cancelar pedido</Button>
           </XStack>
@@ -219,7 +219,7 @@ const Order = () => {
             />
           </YStack>
 
-          <XStack justifyContent="center" padding="$4" gap="$2">
+          <XStack justifyContent="center" paddingVertical="$4" gap="$2">
             <Button onPress={() => setFilter("ALL")}> Todos</Button>
             <Button onPress={() => setFilter("FOOD")}>🍔 Comidas</Button>
             <Button onPress={() => setFilter("DRINK")}>🍻 Bebidas</Button>

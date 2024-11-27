@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, ScrollView, Spinner, Text, XStack, YStack } from 'tamagui';
-import { OrderItem } from '../app/(tabs)/order'; // Adjust the import path as necessary
+import { Button, ScrollView, Text, XStack, YStack } from 'tamagui';
+import { OrderItem } from '../app/(tabs)/order';
 
 interface OrderSummaryProps {
   orderItems: { [key: string]: OrderItem };
