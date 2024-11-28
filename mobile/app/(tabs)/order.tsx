@@ -26,6 +26,11 @@ interface CreateOrderData {
   waiterId: string;
 }
 
+interface User {
+  id: string;
+  // ... other user properties
+}
+
 const fetchMenuItems = async ({ token }: { token?: string | null }): Promise<MenuItem[]> => {
   const response = await fetch("http://localhost:4000/menu-item", {
     method: "GET",
@@ -78,7 +83,7 @@ const createProductionOrder = async ({ token, data }: { token?: string | null; d
 };
 
 const Order = () => {
-  const { session } = useSession();
+  const { session, waiterId } = useSession();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<"FOOD" | "DRINK" | "ALL">("ALL");
   const [orderItems, setOrderItems] = useState<{ [key: string]: OrderItem }>({});
@@ -114,7 +119,7 @@ const Order = () => {
           tableNumber: parseInt(tableNumber),
           customer: customer,
           status: "OPENED",
-          waiterId: "f91b7248-ef32-4974-9070-0d7c3c9dbde9", // TODO: get waiter id from session
+          waiterId: waiterId || "",
         }
       });
 

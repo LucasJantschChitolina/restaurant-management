@@ -6,11 +6,13 @@ const AuthContext = React.createContext<{
     signIn: (email: string, password: string) => void;
     signOut: () => void;
     session?: string | null;
+    waiterId?: string | null;
     isLoading: boolean;
 }>({
     signIn: (email: string, password: string) => null,
     signOut: () => null,
     session: null,
+    waiterId: null,
     isLoading: false,
 });
 
@@ -27,6 +29,8 @@ export function useSession() {
 
 export function SessionProvider(props: React.PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState("session");
+    const [[, waiterId], setWaiterId] = useStorageState("waiterId");
+
     return (
         <AuthContext.Provider
             value={{
@@ -46,17 +50,20 @@ export function SessionProvider(props: React.PropsWithChildren) {
                         const jsonResponse = await loginResponse.json();
 
                         setSession(jsonResponse.token);
-                        router.push("/");
+                        setWaiterId(jsonResponse.waiterId);
 
+                        router.push("/");
                     } catch (error) {
                         console.error('Error during sign-in:', error);
                     }
                 },
                 signOut: () => {
                     setSession(null);
+                    setWaiterId(null);
                     router.push("/login");
                 },
                 session,
+                waiterId: waiterId,
                 isLoading,
             }}
         >
