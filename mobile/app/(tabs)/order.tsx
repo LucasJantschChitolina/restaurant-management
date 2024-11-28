@@ -11,6 +11,7 @@ export interface MenuItem {
   description: string;
   price: number;
   category: "FOOD" | "DRINK";
+  imageUrl?: string;
 }
 
 export interface OrderItem {
