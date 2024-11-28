@@ -5,6 +5,7 @@ interface MenuItemAttributes {
   description: string;
   price: number;
   category: string;
+  imageUrl?: string;
 }
 
 export enum MenuItemCategory {
@@ -18,6 +19,7 @@ export default (sequelize: Sequelize) => {
     public description!: string;
     public price!: number;
     public category!: string;
+    public imageUrl?: string;
 
     static associate(models: any) {
       // define association here
@@ -43,6 +45,10 @@ export default (sequelize: Sequelize) => {
       category: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      imageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
       }
     },
     {

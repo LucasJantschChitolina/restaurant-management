@@ -6,11 +6,14 @@ import { useSession } from "../context";
 import OrderSummary from "@/components/OrderSummary";
 import MenuItemComponent from "@/components/MenuItemComponent";
 
+const API_URL = process.env.API_URL || "http://localhost:4000";
+
 export interface MenuItem {
   id: string;
   description: string;
   price: number;
   category: "FOOD" | "DRINK";
+  imageUrl?: string;
 }
 
 export interface OrderItem {
@@ -25,8 +28,13 @@ interface CreateOrderData {
   waiterId: string;
 }
 
+interface User {
+  id: string;
+  // ... other user properties
+}
+
 const fetchMenuItems = async ({ token }: { token?: string | null }): Promise<MenuItem[]> => {
-  const response = await fetch("http://localhost:4000/menu-item", {
+  const response = await fetch(`${API_URL}/menu-item`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -42,7 +50,7 @@ const fetchMenuItems = async ({ token }: { token?: string | null }): Promise<Men
 };
 
 const createOrder = async ({ token, data }: { token?: string | null; data: CreateOrderData }): Promise<any> => {
-  const response = await fetch("http://localhost:4000/order", {
+  const response = await fetch(`${API_URL}/order`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -59,7 +67,7 @@ const createOrder = async ({ token, data }: { token?: string | null; data: Creat
 };
 
 const createProductionOrder = async ({ token, data }: { token?: string | null; data: { orderId: string; status: string; menuItemId: string } }): Promise<any> => {
-  const response = await fetch("http://localhost:4000/production-order", {
+  const response = await fetch(`${API_URL}/production-order`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -77,7 +85,7 @@ const createProductionOrder = async ({ token, data }: { token?: string | null; d
 };
 
 const Order = () => {
-  const { session } = useSession();
+  const { session, waiterId } = useSession();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<"FOOD" | "DRINK" | "ALL">("ALL");
   const [orderItems, setOrderItems] = useState<{ [key: string]: OrderItem }>({});
@@ -113,7 +121,7 @@ const Order = () => {
           tableNumber: parseInt(tableNumber),
           customer: customer,
           status: "OPENED",
-          waiterId: "f91b7248-ef32-4974-9070-0d7c3c9dbde9", // TODO: get waiter id from session
+          waiterId: waiterId || "",
         }
       });
 
