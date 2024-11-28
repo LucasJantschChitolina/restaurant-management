@@ -6,6 +6,8 @@ import { useSession } from "../context";
 import OrderSummary from "@/components/OrderSummary";
 import MenuItemComponent from "@/components/MenuItemComponent";
 
+const API_URL = process.env.API_URL || "http://localhost:4000";
+
 export interface MenuItem {
   id: string;
   description: string;
@@ -32,7 +34,7 @@ interface User {
 }
 
 const fetchMenuItems = async ({ token }: { token?: string | null }): Promise<MenuItem[]> => {
-  const response = await fetch("http://localhost:4000/menu-item", {
+  const response = await fetch(`${API_URL}/menu-item`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -48,7 +50,7 @@ const fetchMenuItems = async ({ token }: { token?: string | null }): Promise<Men
 };
 
 const createOrder = async ({ token, data }: { token?: string | null; data: CreateOrderData }): Promise<any> => {
-  const response = await fetch("http://localhost:4000/order", {
+  const response = await fetch(`${API_URL}/order`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -65,7 +67,7 @@ const createOrder = async ({ token, data }: { token?: string | null; data: Creat
 };
 
 const createProductionOrder = async ({ token, data }: { token?: string | null; data: { orderId: string; status: string; menuItemId: string } }): Promise<any> => {
-  const response = await fetch("http://localhost:4000/production-order", {
+  const response = await fetch(`${API_URL}/production-order`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

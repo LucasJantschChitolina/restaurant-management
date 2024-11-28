@@ -31,12 +31,14 @@ export function SessionProvider(props: React.PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState("session");
     const [[, waiterId], setWaiterId] = useStorageState("waiterId");
 
+    const API_URL = process.env.API_URL || "http://localhost:4000";
+
     return (
         <AuthContext.Provider
             value={{
                 signIn: async (email, password) => {
                     try {
-                        const loginResponse = await fetch("http://localhost:4000/sign-in", {
+                        const loginResponse = await fetch(`${API_URL}/sign-in`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ email, password }),
