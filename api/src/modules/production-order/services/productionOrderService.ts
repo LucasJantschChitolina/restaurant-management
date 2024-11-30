@@ -19,14 +19,13 @@ interface CreateProductionOrderProps {
   menuItemId: string;
 }
 
-export const createProductionOrderService = async (data: CreateProductionOrderProps) => {
-  const menuItem = await getMenuItemById(data.menuItemId);
-
-  if (!menuItem) {
-    throw new Error('Menu item not found');
+export const createProductionOrderService = async (dataArray: CreateProductionOrderProps[]) => {
+  if (!dataArray.length) {
+    throw new Error('No production orders to create');
   }
 
-  const order = await getOrderById(data.orderId);
+  const { orderId } = dataArray[0]; // All orders should have the same orderId
+  const order = await getOrderById(orderId);
 
   if (!order) {
     throw new Error('Order not found');
@@ -36,19 +35,33 @@ export const createProductionOrderService = async (data: CreateProductionOrderPr
     throw new Error('Order is not opened');
   }
 
-  const orderItem = await createOrderItemService({
-    menuItemId: data.menuItemId,
-    orderId: data.orderId
-  })
+  let totalPrice = 0;
+  const productionOrders = [];
 
-  await increaseOrderValueService(data.orderId, menuItem.price);
+  for (const data of dataArray) {
+    const menuItem = await getMenuItemById(data.menuItemId);
+    if (!menuItem) {
+      throw new Error(`Menu item not found: ${data.menuItemId}`);
+    }
 
-  return await createProductionOrder({
-    orderId: data.orderId,
-    status: data.status,
-    type: menuItem.category,
-    orderItemId: orderItem.id
-  });
+    const orderItem = await createOrderItemService({
+      menuItemId: data.menuItemId,
+      orderId: data.orderId
+    });
+
+    totalPrice += Number(menuItem.price);
+
+    productionOrders.push(await createProductionOrder({
+      orderId: data.orderId,
+      status: data.status,
+      type: menuItem.category,
+      orderItemId: orderItem.id
+    }));
+  }
+
+  await increaseOrderValueService(orderId, totalPrice);
+
+  return productionOrders;
 };
 
 export const getProductionOrderByIdService = async (id: string) => {

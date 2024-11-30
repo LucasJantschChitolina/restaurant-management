@@ -13,11 +13,13 @@ import { validateRequest } from "../../../middlewares/validation";
 
 const router = Router();
 
-const createProductionOrderSchema = z.object({
-  orderId: z.string().uuid({ message: 'Order ID must be a valid UUID' }),
-  status: z.string().nonempty({ message: 'Status is required' }),
-  menuItemId: z.string().uuid({ message: 'Menu item ID must be a valid UUID' }),
-});
+const createProductionOrderSchema = z.array(
+  z.object({
+    orderId: z.string().uuid({ message: 'Order ID must be a valid UUID' }),
+    status: z.string().nonempty({ message: 'Status is required' }),
+    menuItemId: z.string().uuid({ message: 'Menu item ID must be a valid UUID' }),
+  })
+);
 
 const updateProductionOrderSchema = z.object({
   status: z.string().nonempty({ message: 'Status is required' }),

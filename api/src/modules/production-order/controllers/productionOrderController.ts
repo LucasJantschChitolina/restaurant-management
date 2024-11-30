@@ -9,8 +9,8 @@ import {
 
 export const createProductionOrderController = async (req: Request, res: Response) => {
   try {
-    const productionOrder = await createProductionOrderService(req.body);
-    res.status(201).json(productionOrder);
+    const productionOrders = await createProductionOrderService(req.body);
+    res.status(201).json(productionOrders);
   } catch (error) {
     res.status(400).json({ error: (error as Error).message });
   }

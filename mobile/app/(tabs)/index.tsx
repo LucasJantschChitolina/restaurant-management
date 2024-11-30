@@ -94,9 +94,6 @@ export default function HomeScreen() {
     order.status === "PENDING" || order.status === "IN_PROGRESS"
   ) || [];
 
-  console.log({ ongoingOrders });
-  console.log({ pendingProductionOrders });
-
   return (
     <YStack flex={1} padding="$4" backgroundColor="$background">
       <XStack justifyContent="space-between" alignItems="center" paddingVertical="$4">
