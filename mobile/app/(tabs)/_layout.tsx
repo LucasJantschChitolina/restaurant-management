@@ -33,6 +33,33 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="menuItems"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'menu' : 'menu-outline'} color='#FF474C' />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="kitchen"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'restaurant' : 'restaurant-outline'} color='#FF474C' />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="drinks"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'beer' : 'beer-outline'} color='#FF474C' />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="reports"
         options={{
           title: '',
