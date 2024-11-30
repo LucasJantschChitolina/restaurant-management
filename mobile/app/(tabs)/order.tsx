@@ -66,7 +66,7 @@ const createOrder = async ({ token, data }: { token?: string | null; data: Creat
   return response.json();
 };
 
-const createProductionOrder = async ({ token, data }: { token?: string | null; data: { orderId: string; status: string; menuItemId: string } }): Promise<any> => {
+const createProductionOrder = async ({ token, data }: { token?: string | null; data: { orderId: string; status: string; menuItemId: string }[] }): Promise<any> => {
   const response = await fetch(`${API_URL}/production-order`, {
     method: "POST",
     headers: {
@@ -125,21 +125,18 @@ const Order = () => {
         }
       });
 
-      const productionOrderPromises = Object.values(orderItems)
-        .flatMap(({ item, quantity }) =>
-          Array.from({ length: quantity }, () =>
-            createProductionOrder({
-              token: session,
-              data: {
-                orderId: order.id,
-                status: "PENDING",
-                menuItemId: item.id,
-              },
-            })
-          )
-        );
+      const productionOrdersData = Object.values(orderItems).flatMap(({ item, quantity }) =>
+        Array.from({ length: quantity }, () => ({
+          orderId: order.id,
+          status: "PENDING",
+          menuItemId: item.id,
+        }))
+      );
 
-      await Promise.all(productionOrderPromises);
+      await createProductionOrder({
+        token: session,
+        data: productionOrdersData
+      });
 
       handleCancelOrder();
     } catch (error) {
@@ -154,7 +151,7 @@ const Order = () => {
     setIsSummaryVisible(false);
     setTableNumber("");
     setCustomer("");
-    queryClient.invalidateQueries({ queryKey: ["menuItems"] });
+    queryClient.invalidateQueries({ queryKey: ["menuItems", "orders", "productionOrders"] });
     router.back();
   }
 

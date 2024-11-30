@@ -33,18 +33,18 @@ export const closeOrderService = async (id: string) => {
   return updatedOrder;
 };
 
-export const increaseOrderValueService = async (id: string, menuItemPrice: number) => {
-  const order = await getOrderById(id);
-
+export const increaseOrderValueService = async (orderId: string, value: number) => {
+  const order = await getOrderById(orderId);
   if (!order) {
     throw new Error('Order not found');
   }
 
-  order.totalAmount = Number(order.totalAmount || 0) + Number(menuItemPrice);
+  const currentTotal = Number(order.totalAmount || 0);
+  const valueToAdd = Number(value);
+  
+  const newTotal = currentTotal + valueToAdd;
 
-  const updatedOrder = await updateOrderValue(id, order.totalAmount);
-
-  return updatedOrder;
+  return await updateOrderValue(orderId, newTotal);
 };
 
 export const getOrderByIdService = async (id: string) => {
