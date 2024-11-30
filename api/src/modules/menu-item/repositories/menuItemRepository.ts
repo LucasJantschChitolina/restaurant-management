@@ -25,7 +25,7 @@ export const getMenuItemByDescription = async (description: string) => {
   return await MenuItem.findOne({ where: { description } });
 }
 
-export const updateMenuItem = async (id: string, data: { description?: string; price?: number }) => {
+export const updateMenuItem = async (id: string, data: { description?: string; price?: number; imageUrl?: string }) => {
   const menuItem = await MenuItem.findByPk(id);
   if (!menuItem) return null;
   return await menuItem.update(data);
