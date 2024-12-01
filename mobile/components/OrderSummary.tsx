@@ -33,7 +33,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ orderItems, totalAmount, on
           color="white"
           onPress={onConfirm}
         >
-          {"Confirmar Pedido"}
+          Confirmar Pedido
         </Button>
       </XStack>
     </YStack>

@@ -5,6 +5,8 @@ import {
   updateOrderController,
   deleteOrderController,
   listOrdersController,
+  closeOrderController,
+  listOrdersByStatusController
 } from "../controllers/ordersController";
 import { z } from "zod";
 import { OrderStatus } from "../../../../models/orders";
@@ -31,5 +33,7 @@ router.get("/", listOrdersController);
 router.get("/:id", getOrderController);
 router.put("/:id", validateRequest(updateOrderSchema), updateOrderController);
 router.delete("/:id", deleteOrderController);
+router.post("/:id/close", closeOrderController);
+router.get("/status/:status", listOrdersByStatusController);
 
 export default router;

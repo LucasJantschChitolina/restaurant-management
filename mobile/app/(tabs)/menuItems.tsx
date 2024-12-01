@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Input, Text, YStack, ScrollView, Image, ToggleGroup, styled, Spinner, Card, XStack, Form } from "tamagui";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "../context";
+import AppButton from "@/components/AppButton";
 
 const API_URL = process.env.API_URL || "http://localhost:4000";
 
@@ -176,9 +177,9 @@ const MenuItemCRUD = () => {
             <Text>Bebida</Text>
           </ToggleGroup.Item>
         </ToggleGroup>
-        <Button backgroundColor="$red9" color="$red1" hoverStyle={{ backgroundColor: "$red10" }} onPress={handleSubmit}>
+        <AppButton title="" onPress={handleSubmit}>
           {editingItemId ? "Atualizar Item" : "Adicionar Item"}
-        </Button>
+        </AppButton>
       </Form>
 
       <ScrollView marginTop="$4">

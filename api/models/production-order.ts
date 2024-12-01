@@ -3,7 +3,7 @@ import { Model, DataTypes, Sequelize, UUIDV4 } from 'sequelize';
 export interface ProductionOrderAttributes {
   id?: string;
   orderId: string;
-  status: string;
+  status: ProductionOrderStatus;
   type: string;
   orderItemId: string;
 }
@@ -16,6 +16,7 @@ export enum ProductionOrderStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   CANCELLED = 'CANCELLED',
   COMPLETED = 'COMPLETED',
+  DELIVERED = 'DELIVERED',
 }
 
 export enum ProductionOrderType {
@@ -27,7 +28,7 @@ export default (sequelize: Sequelize) => {
   class ProductionOrder extends Model<ProductionOrderAttributes> implements ProductionOrderAttributes {
     public id!: string;
     public orderId!: string;
-    public status!: string;
+    public status!: ProductionOrderStatus;
     public type!: string;
     public orderItemId!: string;
 

@@ -1,4 +1,4 @@
-import ProductionOrderModel, { ProductionOrderCreationAttributes, ProductionOrderUpdateAttributes } from '../../../../models/production-order';
+import ProductionOrderModel, { ProductionOrderCreationAttributes, ProductionOrderStatus, ProductionOrderUpdateAttributes } from '../../../../models/production-order';
 import sequelize from '../../../db';
 
 const ProductionOrder = ProductionOrderModel(sequelize);
@@ -26,4 +26,8 @@ export const deleteProductionOrder = async (id: string) => {
 
 export const listProductionOrders = async () => {
   return await ProductionOrder.findAll();
+};
+
+export const listProductionOrdersByStatus = async (status: ProductionOrderStatus) => {
+  return await ProductionOrder.findAll({ where: { status } });
 };

@@ -4,6 +4,8 @@ import { Button } from "tamagui";
 
 type AppButtonProps = ButtonProps & {
   children?: React.ReactNode;
+  marginBottom?: string | number;
+  title?: string;
 };
 
 const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>((props, ref) => {
@@ -11,9 +13,10 @@ const AppButton = React.forwardRef<HTMLButtonElement, AppButtonProps>((props, re
     <Button
       ref={ref}
       size="$3"
-      borderRadius={20}
+      borderRadius={10}
       backgroundColor="#D73035"
       color="white"
+      marginBottom={props.marginBottom}
       {...props}
     >
       {props.children}
