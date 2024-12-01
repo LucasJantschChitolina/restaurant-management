@@ -84,7 +84,6 @@ module.exports = {
           type: 'foreign key',
           name: constraint.name,
           references: constraint.references,
-          onDelete: 'CASCADE',
           onUpdate: 'CASCADE'
         });
       } catch (error) {
