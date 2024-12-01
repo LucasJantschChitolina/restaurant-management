@@ -40,13 +40,13 @@ export const listProductionOrders = async () => {
     const orderItem = orderItems.find(item => item.id === productionOrder.orderItemId);
     const menuItem = menuItems.find(item => item.id === orderItem?.menuItemId);
     const order = orders.find(item => item.id === productionOrder.orderId);
-    
+
     return { ...productionOrder.dataValues, menuItem: menuItem, order: order };
   });
 };
 
 export const listProductionOrdersByStatus = async (status: ProductionOrderStatus) => {
-  const productionOrders = await ProductionOrder.findAll({ where: { status } });
+  const productionOrders = (await ProductionOrder.findAll({ where: { status } }));
   const orderItems = await OrderItem.findAll({});
   const menuItems = await MenuItem.findAll({});
   const orders = await Order.findAll({});
@@ -55,7 +55,7 @@ export const listProductionOrdersByStatus = async (status: ProductionOrderStatus
     const orderItem = orderItems.find(item => item.id === productionOrder.orderItemId);
     const menuItem = menuItems.find(item => item.id === orderItem?.menuItemId);
     const order = orders.find(item => item.id === productionOrder.orderId);
-    
+
     return { ...productionOrder.dataValues, menuItem: menuItem, order: order };
   });
 };

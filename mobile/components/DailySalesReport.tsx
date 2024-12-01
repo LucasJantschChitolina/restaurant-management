@@ -69,13 +69,13 @@ const DailySalesReport: React.FC<SalesReportProps> = ({
               <XStack justifyContent="space-between">
                 <Text color="$gray11">Valor Total</Text>
                 <Text fontWeight="$12" color="$gray12">
-                  R$ {totalAmount}
+                  R$ {totalAmount ? Number(totalAmount).toFixed(2) : '0.00'}
                 </Text>
               </XStack>
               <XStack justifyContent="space-between">
                 <Text color="$gray11">Ticket Médio</Text>
                 <Text fontWeight="$12" color="$gray12">
-                  R$ {averageOrderValue}
+                  R$ {averageOrderValue ? Number(averageOrderValue).toFixed(2) : '0.00'}
                 </Text>
               </XStack>
             </YStack>
@@ -101,7 +101,7 @@ const DailySalesReport: React.FC<SalesReportProps> = ({
                     <XStack justifyContent="space-between" alignItems="center">
                       <YStack gap="$1">
                         <Text fontWeight="$12" color="$gray12">{item.description}</Text>
-                        <Text fontSize="$3" color="$gray11" style={{ width: 'fit-content', borderRadius: 20, paddingLeft: 8, paddingRight: 8, paddingTop: 2, paddingBottom: 2, backgroundColor: item.category === 'FOOD' ? '#66a866' : '#a86666', color: '#fff' }}>{item.category.toLocaleLowerCase()}</Text>
+                        <Text fontSize="$3" color="$gray11" style={{ width: 'fit-content', borderRadius: 20, paddingLeft: 8, paddingRight: 8, paddingTop: 2, paddingBottom: 2, backgroundColor: item.category === 'FOOD' ? '#D73035' : '#4d39f', color: '#fff' }}>{item.category.toLocaleLowerCase()}</Text>
                       </YStack>
                     </XStack>
                   </Card.Header>

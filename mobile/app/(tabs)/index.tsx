@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Button, Card, ScrollView, Separator, Spinner, Text, XStack, YStack } from 'tamagui';
 import { useSession } from '../context';
-import { getColorByStatus, getLabelByStatus } from '@/utils/status';
+import { getColorByStatus, convertStatusToLabel } from '@/utils/status';
 import { API_URL } from '@/config/api';
 
 enum ProductionOrderStatus {
@@ -106,9 +106,9 @@ export default function HomeScreen() {
     queryFn: () => fetchProductionOrders({ token: session }),
   });
 
-  const { data: pendingProductionOrders, isLoading: pendingProductionOrdersLoading } = useQuery({
+  const { data: productionOrdersToDeliver, isLoading: pendingProductionOrdersLoading } = useQuery({
     queryKey: ["pendingProductionOrders"],
-    queryFn: () => fetchProductionOrdersByStatus({ token: session, status: ProductionOrderStatus.PENDING }),
+    queryFn: () => fetchProductionOrdersByStatus({ token: session, status: ProductionOrderStatus.COMPLETED }),
   });
 
   const markAsDeliveredMutation = useMutation({
@@ -210,20 +210,19 @@ export default function HomeScreen() {
                         <Text>Mesa {order.tableNumber} - <Text fontWeight="bold">#{order.id.slice(0, 8)}</Text></Text>
                       </XStack>
                       <Text>R$ {order.totalAmount || '0.00'}</Text>
-                      <Button onPress={() => handleCloseOrder(order.id)} disabled={closeOrderMutation.isPending}>
-                        {closeOrderMutation.isPending ? "Fechando..." : "Fechar comanda"}
-                      </Button>
-
-                      <Text>{order.status}</Text>
+                      <Text>{convertStatusToLabel(order.status)}</Text>
                     </XStack>
                   </Card.Header>
-                  <Card.Footer padded>
+                  <Card.Footer padded display="flex" justifyContent="space-between" alignItems="center">
                     <XStack justifyContent="space-between" gap="$2">
                       <Text fontSize="$3" color="$gray11" fontWeight="bold">{order.customer}</Text>
                       <Text fontSize="$3" color="$gray11">
                         {new Date(order.openedAt).toLocaleTimeString()}
                       </Text>
                     </XStack>
+                    <Button onPress={() => handleCloseOrder(order.id)} disabled={closeOrderMutation.isPending}>
+                      {closeOrderMutation.isPending ? "Fechando..." : "Fechar comanda"}
+                    </Button>
                   </Card.Footer>
                 </Card>
               ))}
@@ -234,16 +233,16 @@ export default function HomeScreen() {
 
         <Card bordered size="$4" marginBottom="$4">
           <Card.Header padded>
-            <Text fontSize="$6" fontWeight="$14">Ordens de produção pendentes({pendingProductionOrders?.length || 0})</Text>
+            <Text fontSize="$6" fontWeight="$14">Prontos para entrega: ({productionOrdersToDeliver?.length || 0})</Text>
           </Card.Header>
           <Separator />
           <YStack padding="$2" gap="$2">
             <ScrollView maxHeight={300}>
-              {pendingProductionOrders?.map((order) => (
+              {productionOrdersToDeliver?.map((order) => (
                 <Card key={order.id} bordered size="$4">
                   <Card.Header padded>
                     <XStack justifyContent="space-between" alignItems="center">
-                      <Text>{order.menuItem?.description} - Status: {order.status}</Text>
+                      <Text>{order.menuItem?.description} - Status: {convertStatusToLabel(order.status)}</Text>
                       <Button
                         size="$2"
                         theme="green"
@@ -254,7 +253,7 @@ export default function HomeScreen() {
                       </Button>
                     </XStack>
                   </Card.Header>
-                  <Card.Footer padded backgroundColor="$gray3">
+                  <Card.Footer padded backgroundColor="$gray3" display="flex" justifyContent="space-between" alignItems="center">
                     <XStack justifyContent="space-between" alignItems="center">
                       <Text fontSize="$3" color="$gray11">Status: </Text>
                       <XStack
@@ -267,10 +266,11 @@ export default function HomeScreen() {
                           fontSize="$2"
                           color={getColorByStatus(order.status).text}
                         >
-                          {getLabelByStatus(order.status)}
+                          {convertStatusToLabel(order.status)}
                         </Text>
                       </XStack>
                     </XStack>
+                    <Text>Mesa: {order.order.tableNumber}</Text>
                   </Card.Footer>
                 </Card>
               ))}
@@ -280,16 +280,16 @@ export default function HomeScreen() {
 
         <Card bordered size="$4">
           <Card.Header padded>
-            <Text fontSize="$6" fontWeight="$14">Outras ordens de produção ({productionOrders?.filter(order => order.status !== ProductionOrderStatus.PENDING).length || 0})</Text>
+            <Text fontSize="$6" fontWeight="$14">Em Preparo ({productionOrders?.filter(order => order.status === ProductionOrderStatus.PENDING || order.status === ProductionOrderStatus.IN_PROGRESS).length || 0})</Text>
           </Card.Header>
           <Separator />
           <YStack padding="$2" gap="$2">
             <ScrollView maxHeight={300}>
-              {productionOrders?.filter(order => order.status !== ProductionOrderStatus.PENDING).map((order) => (
+              {productionOrders?.filter(order => order.status === ProductionOrderStatus.PENDING || order.status === ProductionOrderStatus.IN_PROGRESS).map((order) => (
                 <Card key={order.id} bordered size="$4">
                   <Card.Header padded>
                     <XStack justifyContent="space-between" alignItems="center">
-                      <Text>{order.menuItem?.description} - Status: {order.status}</Text>
+                      <Text>{order.menuItem?.description} - Status: {convertStatusToLabel(order.status)}</Text>
                       {order.status === "COMPLETED" && (
                         <Button
                           size="$2"
@@ -302,8 +302,8 @@ export default function HomeScreen() {
                       )}
                     </XStack>
                   </Card.Header>
-                  <Card.Footer padded backgroundColor="$gray3">
-                    <XStack justifyContent="space-between" alignItems="center">
+                  <Card.Footer padded backgroundColor="$gray3" display="flex" justifyContent="space-between" alignItems="center">
+                    <XStack display="flex" justifyContent="space-between" alignItems="center">
                       <Text fontSize="$3" color="$gray11">Status: </Text>
                       <XStack
                         backgroundColor={getColorByStatus(order.status).bg}
@@ -315,10 +315,60 @@ export default function HomeScreen() {
                           fontSize="$2"
                           color={getColorByStatus(order.status).text}
                         >
-                          {getLabelByStatus(order.status)}
+                          {convertStatusToLabel(order.status)}
                         </Text>
                       </XStack>
                     </XStack>
+                    <Text>Mesa: {order.order.tableNumber}</Text>
+                  </Card.Footer>
+                </Card>
+              ))}
+            </ScrollView>
+          </YStack>
+        </Card>
+
+        <Card bordered size="$4">
+          <Card.Header padded>
+            <Text fontSize="$6" fontWeight="$14">Outras ordens de produção ({productionOrders?.filter(order => order.status === ProductionOrderStatus.CANCELLED || order.status === ProductionOrderStatus.DELIVERED).length || 0})</Text>
+          </Card.Header>
+          <Separator />
+          <YStack padding="$2" gap="$2">
+            <ScrollView maxHeight={300}>
+              {productionOrders?.filter(order => order.status === ProductionOrderStatus.CANCELLED || order.status === ProductionOrderStatus.DELIVERED).map((order) => (
+                <Card key={order.id} bordered size="$4">
+                  <Card.Header padded>
+                    <XStack justifyContent="space-between" alignItems="center">
+                      <Text>{order.menuItem?.description} - Status: {convertStatusToLabel(order.status)}</Text>
+                      {order.status === "COMPLETED" && (
+                        <Button
+                          size="$2"
+                          theme="green"
+                          onPress={() => markAsDeliveredMutation.mutate(order.id)}
+                          disabled={markAsDeliveredMutation.isPending}
+                        >
+                          {markAsDeliveredMutation.isPending ? "Delivering..." : "Mark as Delivered"}
+                        </Button>
+                      )}
+                    </XStack>
+                  </Card.Header>
+                  <Card.Footer padded backgroundColor="$gray3" display="flex" justifyContent="space-between" alignItems="center">
+                    <XStack display="flex" justifyContent="space-between" alignItems="center">
+                      <Text fontSize="$3" color="$gray11">Status: </Text>
+                      <XStack
+                        backgroundColor={getColorByStatus(order.status).bg}
+                        paddingHorizontal="$2"
+                        paddingVertical="$1"
+                        borderRadius="$4"
+                      >
+                        <Text
+                          fontSize="$2"
+                          color={getColorByStatus(order.status).text}
+                        >
+                          {convertStatusToLabel(order.status)}
+                        </Text>
+                      </XStack>
+                    </XStack>
+                    <Text>Mesa: {order.order.tableNumber}</Text>
                   </Card.Footer>
                 </Card>
               ))}

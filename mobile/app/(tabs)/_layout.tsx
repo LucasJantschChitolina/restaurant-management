@@ -19,7 +19,7 @@ export default function TabLayout() {
         options={{
           title: '',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color='#FF474C' />
+            <TabBarIcon name={focused ? 'home' : 'home-outline'} color='#D73035' />
           ),
         }}
       />
@@ -28,7 +28,7 @@ export default function TabLayout() {
         options={{
           title: '',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'cart' : 'cart-outline'} color='#FF474C' />
+            <TabBarIcon name={focused ? 'cart' : 'cart-outline'} color='#D73035' />
           ),
         }}
       />
@@ -37,7 +37,7 @@ export default function TabLayout() {
         options={{
           title: '',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'menu' : 'menu-outline'} color='#FF474C' />
+            <TabBarIcon name={focused ? 'grid' : 'grid-outline'} color='#D73035' />
           ),
         }}
       />
@@ -46,7 +46,7 @@ export default function TabLayout() {
         options={{
           title: '',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'restaurant' : 'restaurant-outline'} color='#FF474C' />
+            <TabBarIcon name={focused ? 'restaurant' : 'restaurant-outline'} color='#D73035' />
           ),
         }}
       />
@@ -55,7 +55,7 @@ export default function TabLayout() {
         options={{
           title: '',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'beer' : 'beer-outline'} color='#FF474C' />
+            <TabBarIcon name={focused ? 'beer' : 'beer-outline'} color='#D73035' />
           ),
         }}
       />
@@ -64,7 +64,7 @@ export default function TabLayout() {
         options={{
           title: '',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'bar-chart' : 'bar-chart-outline'} color='#FF474C' />
+            <TabBarIcon name={focused ? 'bar-chart' : 'bar-chart-outline'} color='#D73035' />
           ),
         }}
       />
