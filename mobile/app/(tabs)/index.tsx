@@ -44,6 +44,7 @@ interface ProductionOrder {
   status: string;
   type: string;
   menuItem: MenuItem;
+  order: Order;
 }
 
 const fetchOrdersByStatus = async ({ token, status }: { token?: string | null, status: OrderStatus }): Promise<Order[]> => {
