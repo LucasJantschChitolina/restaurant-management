@@ -3,15 +3,16 @@ import {
   deleteProductionOrder,
   getProductionOrderById,
   listProductionOrders,
+  listProductionOrdersByStatus,
   updateProductionOrder,
 } from '../repositories/productionOrderRepository';
 
 import { OrderStatus } from '../../../../models/orders';
-import { ProductionOrderUpdateAttributes } from '../../../../models/production-order';
+import { ProductionOrderStatus, ProductionOrderUpdateAttributes } from '../../../../models/production-order';
 import { getMenuItemById } from '../../menu-item/repositories/menuItemRepository';
 import { createOrderItemService } from '../../order-item/services/orderItemService';
-import { increaseOrderValueService } from '../../order/services/orderService';
 import { getOrderById } from '../../order/repositories/ordersRepository';
+import { increaseOrderValueService } from '../../order/services/orderService';
 
 interface CreateProductionOrderProps {
   orderId: string;
@@ -24,7 +25,7 @@ export const createProductionOrderService = async (dataArray: CreateProductionOr
     throw new Error('No production orders to create');
   }
 
-  const { orderId } = dataArray[0]; // All orders should have the same orderId
+  const { orderId } = dataArray[0];
   const order = await getOrderById(orderId);
 
   if (!order) {
@@ -53,7 +54,7 @@ export const createProductionOrderService = async (dataArray: CreateProductionOr
 
     productionOrders.push(await createProductionOrder({
       orderId: data.orderId,
-      status: data.status,
+      status: data.status as ProductionOrderStatus,
       type: menuItem.category,
       orderItemId: orderItem.id
     }));
@@ -80,4 +81,18 @@ export const deleteProductionOrderService = async (id: string) => {
 
 export const listProductionOrdersService = async () => {
   return await listProductionOrders();
+};
+
+export const listProductionOrdersByStatusService = async (status: ProductionOrderStatus) => {
+  return await listProductionOrdersByStatus(status);
+};
+
+export const markAsDeliveredService = async (id: string) => {
+  const productionOrder = await getProductionOrderById(id);
+
+  if (!productionOrder) {
+    throw new Error('Production order not found');
+  }
+
+  return await updateProductionOrder(id, { ...productionOrder, status: ProductionOrderStatus.DELIVERED });
 };

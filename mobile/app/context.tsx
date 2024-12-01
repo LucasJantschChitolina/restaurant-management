@@ -1,6 +1,7 @@
 import React from "react";
 import { useStorageState } from "./useStorageState";
 import { router } from "expo-router";
+import { API_URL } from "@/config/api";
 
 const AuthContext = React.createContext<{
     signIn: (email: string, password: string) => void;
@@ -30,8 +31,6 @@ export function useSession() {
 export function SessionProvider(props: React.PropsWithChildren) {
     const [[isLoading, session], setSession] = useStorageState("session");
     const [[, waiterId], setWaiterId] = useStorageState("waiterId");
-
-    const API_URL = process.env.API_URL || "http://localhost:4000";
 
     return (
         <AuthContext.Provider

@@ -7,6 +7,7 @@ import {
   getWaiterById,
   updateOrderValue,
   closeOrder,
+  listOrdersByStatus,
 } from '../repositories/ordersRepository';
 
 import { OrderAttributes, OrderStatus } from '../../../../models/orders';
@@ -61,4 +62,8 @@ export const deleteOrderService = async (id: string) => {
 
 export const listOrdersService = async () => {
   return await listOrders();
+};
+
+export const listOrdersByStatusService = async (status: OrderStatus) => {
+  return await listOrdersByStatus(status);
 };

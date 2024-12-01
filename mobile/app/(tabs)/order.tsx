@@ -5,8 +5,8 @@ import { Button, Input, Text, XStack, YStack, ScrollView, Spinner } from "tamagu
 import { useSession } from "../context";
 import OrderSummary from "@/components/OrderSummary";
 import MenuItemComponent from "@/components/MenuItemComponent";
-
-const API_URL = process.env.API_URL || "http://localhost:4000";
+import AppButton from "@/components/AppButton";
+import { API_URL } from "@/config/api";
 
 export interface MenuItem {
   id: string;
@@ -26,11 +26,6 @@ interface CreateOrderData {
   customer: string;
   status: string;
   waiterId: string;
-}
-
-interface User {
-  id: string;
-  // ... other user properties
 }
 
 const fetchMenuItems = async ({ token }: { token?: string | null }): Promise<MenuItem[]> => {
@@ -151,7 +146,12 @@ const Order = () => {
     setIsSummaryVisible(false);
     setTableNumber("");
     setCustomer("");
-    queryClient.invalidateQueries({ queryKey: ["menuItems", "orders", "productionOrders"] });
+
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
+    queryClient.invalidateQueries({ queryKey: ["productionOrders"] });
+    queryClient.invalidateQueries({ queryKey: ["pendingProductionOrders"] });
+    queryClient.invalidateQueries({ queryKey: ["menuItems"] });
+
     router.back();
   }
 
@@ -207,7 +207,7 @@ const Order = () => {
         <>
           <XStack alignItems="center" justifyContent="space-between" paddingVertical="$4">
             <Text fontSize="$8" fontWeight="$16">Comanda</Text>
-            <Button color="$red10" onPress={handleCancelOrder}>cancelar pedido</Button>
+            <Button color="$red10" onPress={handleCancelOrder}>Cancelar pedido</Button>
           </XStack>
 
           <YStack gap="$2">
@@ -240,13 +240,13 @@ const Order = () => {
               />
             ))}
           </ScrollView>
-          <Button
-            marginTop="$4"
+          <AppButton
+            title="Ver resumo da comanda"
             disabled={Object.keys(orderItems).length === 0}
             onPress={() => setIsSummaryVisible(true)}
           >
             Ver resumo da comanda (${totalAmount.toFixed(2)})
-          </Button>
+          </AppButton>
         </>
       )}
     </YStack>

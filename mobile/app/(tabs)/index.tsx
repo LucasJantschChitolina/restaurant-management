@@ -1,17 +1,31 @@
-import { useQuery } from "@tanstack/react-query";
+import AppButton from "@/components/AppButton";
+import { Ionicons } from '@expo/vector-icons';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from 'expo-router';
 import React from 'react';
-import { Button, Card, ScrollView, Separator, Spinner, Text, View, XStack, YStack, Image } from 'tamagui';
+import { Button, Card, ScrollView, Separator, Spinner, Text, XStack, YStack } from 'tamagui';
 import { useSession } from '../context';
-import { Ionicons } from '@expo/vector-icons';
+import { getColorByStatus, getLabelByStatus } from '@/utils/status';
+import { API_URL } from '@/config/api';
 
-const API_URL = process.env.API_URL || "http://localhost:4000";
+enum ProductionOrderStatus {
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  CANCELLED = 'CANCELLED',
+  COMPLETED = 'COMPLETED',
+  DELIVERED = 'DELIVERED',
+}
+
+enum OrderStatus {
+  OPENED = 'OPENED',
+  CLOSED = 'CLOSED',
+}
 
 interface Order {
   id: string;
   tableNumber: number;
   customer: string;
-  status: string;
+  status: OrderStatus;
   totalAmount: number;
   openedAt: string;
 }
@@ -30,12 +44,11 @@ interface ProductionOrder {
   status: string;
   type: string;
   menuItem: MenuItem;
+  order: Order;
 }
 
-const DEFAULT_IMAGE = "https://media.istockphoto.com/id/520410807/photo/cheeseburger.jpg?s=612x612&w=0&k=20&c=fG_OrCzR5HkJGI8RXBk76NwxxTasMb1qpTVlEM0oyg4=";
-
-const fetchOrders = async ({ token }: { token?: string | null }): Promise<Order[]> => {
-  const response = await fetch(`${API_URL}/order`, {
+const fetchOrdersByStatus = async ({ token, status }: { token?: string | null, status: OrderStatus }): Promise<Order[]> => {
+  const response = await fetch(`${API_URL}/order/status/${status}`, {
     headers: {
       "Content-Type": "application/json",
       'Authorization': `Bearer ${token}`,
@@ -64,12 +77,28 @@ const fetchProductionOrders = async ({ token }: { token?: string | null }): Prom
   return response.json();
 };
 
+const fetchProductionOrdersByStatus = async ({ token, status }: { token?: string | null, status: ProductionOrderStatus }): Promise<ProductionOrder[]> => {
+  const response = await fetch(`${API_URL}/production-order/status/${status}`, {
+    headers: {
+      "Content-Type": "application/json",
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch production orders");
+  }
+
+  return response.json();
+};
+
 export default function HomeScreen() {
+  const queryClient = useQueryClient();
   const { session, signOut } = useSession();
 
   const { data: orders, isLoading: ordersLoading } = useQuery({
     queryKey: ["orders"],
-    queryFn: () => fetchOrders({ token: session }),
+    queryFn: () => fetchOrdersByStatus({ token: session, status: OrderStatus.OPENED }),
   });
 
   const { data: productionOrders, isLoading: productionOrdersLoading } = useQuery({
@@ -77,11 +106,71 @@ export default function HomeScreen() {
     queryFn: () => fetchProductionOrders({ token: session }),
   });
 
+  const { data: pendingProductionOrders, isLoading: pendingProductionOrdersLoading } = useQuery({
+    queryKey: ["pendingProductionOrders"],
+    queryFn: () => fetchProductionOrdersByStatus({ token: session, status: ProductionOrderStatus.PENDING }),
+  });
+
+  const markAsDeliveredMutation = useMutation({
+    mutationFn: async (productionOrderId: string) => {
+      const response = await fetch(`${API_URL}/production-order/${productionOrderId}/delivered`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session}`,
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to mark order as delivered");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["productionOrders"] });
+      queryClient.invalidateQueries({ queryKey: ["pendingProductionOrders"] });
+    },
+    onError: (error) => {
+      console.error("Error marking order as delivered:", error);
+    },
+  });
+
+  const closeOrderMutation = useMutation({
+    mutationFn: async (orderId: string) => {
+      const response = await fetch(`${API_URL}/order/${orderId}/close`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session}`,
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to close order");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["productionOrders"] });
+      queryClient.invalidateQueries({ queryKey: ["pendingProductionOrders"] });
+    },
+    onError: (error) => {
+      console.error("Error closing order:", error);
+    },
+  });
+
   const handleCreateOrder = () => {
     router.push("/order");
   };
 
-  if (ordersLoading || productionOrdersLoading) {
+  const handleCloseOrder = (orderId: string) => {
+    closeOrderMutation.mutate(orderId);
+  };
+
+  if (ordersLoading || productionOrdersLoading || pendingProductionOrdersLoading) {
     return (
       <YStack flex={1} justifyContent="center" alignItems="center">
         <Spinner size="large" />
@@ -89,126 +178,154 @@ export default function HomeScreen() {
     );
   }
 
-  const ongoingOrders = orders?.filter(order => order.status === "OPENED") || [];
-  const pendingProductionOrders = productionOrders?.filter(order =>
-    order.status === "PENDING" || order.status === "IN_PROGRESS"
-  ) || [];
-
   return (
     <YStack flex={1} padding="$4" backgroundColor="$background">
       <XStack justifyContent="space-between" alignItems="center" paddingVertical="$4">
         <Text fontSize="$8" fontWeight="$16">Dashboard</Text>
-        <Button onPress={signOut} theme="red">Sign Out</Button>
+        <Button onPress={signOut}>Sign Out</Button>
       </XStack>
 
-      <Button
+      <AppButton
+        marginBottom="$4"
+        title="Abrir nova comanda"
         onPress={handleCreateOrder}
-        size="$5"
-        theme="green"
-        marginVertical="$4"
       >
-        Create New Order
-      </Button>
+        Abrir nova comanda
+      </AppButton>
 
       <ScrollView>
         <Card bordered size="$4" marginBottom="$4">
           <Card.Header padded>
-            <Text fontSize="$6" fontWeight="$14">Ongoing Orders ({ongoingOrders.length})</Text>
+            <Text fontSize="$6" fontWeight="$14">Comandas Abertas ({orders?.length || 0})</Text>
           </Card.Header>
           <Separator />
           <YStack padding="$2" gap="$2">
-            {ongoingOrders.map((order) => (
-              <Card key={order.id} bordered size="$4" theme="dark">
-                <Card.Header padded>
-                  <XStack justifyContent="space-between" alignItems="center">
-                    <XStack alignItems="center" gap="$2">
-                      <Ionicons name="restaurant-outline" size={24} color="#666" />
-                      <Text>Table {order.tableNumber} - <Text fontWeight="bold">#{order.id.slice(0, 8)}</Text></Text>
+            <ScrollView maxHeight={300}>
+              {orders?.map((order) => (
+                <Card key={order.id} bordered size="$4" theme="dark">
+                  <Card.Header padded>
+                    <XStack justifyContent="space-between" alignItems="center">
+                      <XStack alignItems="center" gap="$2">
+                        <Ionicons name="restaurant-outline" size={24} color="#666" />
+                        <Text>Mesa {order.tableNumber} - <Text fontWeight="bold">#{order.id.slice(0, 8)}</Text></Text>
+                      </XStack>
+                      <Text>R$ {order.totalAmount || '0.00'}</Text>
+                      <Button onPress={() => handleCloseOrder(order.id)} disabled={closeOrderMutation.isPending}>
+                        {closeOrderMutation.isPending ? "Fechando..." : "Fechar comanda"}
+                      </Button>
+
+                      <Text>{order.status}</Text>
                     </XStack>
-                    <Text>R$ {order.totalAmount || '0.00'}</Text>
-                  </XStack>
-                </Card.Header>
-                <Card.Footer padded>
-                  <XStack justifyContent="space-between" gap="$2">
-                    <Text fontSize="$3" color="$gray11" fontWeight="bold">{order.customer}</Text>
-                    <Text fontSize="$3" color="$gray11">
-                      {new Date(order.openedAt).toLocaleTimeString()}
-                    </Text>
-                  </XStack>
-                </Card.Footer>
-              </Card>
-            ))}
+                  </Card.Header>
+                  <Card.Footer padded>
+                    <XStack justifyContent="space-between" gap="$2">
+                      <Text fontSize="$3" color="$gray11" fontWeight="bold">{order.customer}</Text>
+                      <Text fontSize="$3" color="$gray11">
+                        {new Date(order.openedAt).toLocaleTimeString()}
+                      </Text>
+                    </XStack>
+                  </Card.Footer>
+                </Card>
+              ))}
+            </ScrollView>
+
+          </YStack>
+        </Card>
+
+        <Card bordered size="$4" marginBottom="$4">
+          <Card.Header padded>
+            <Text fontSize="$6" fontWeight="$14">Ordens de produção pendentes({pendingProductionOrders?.length || 0})</Text>
+          </Card.Header>
+          <Separator />
+          <YStack padding="$2" gap="$2">
+            <ScrollView maxHeight={300}>
+              {pendingProductionOrders?.map((order) => (
+                <Card key={order.id} bordered size="$4">
+                  <Card.Header padded>
+                    <XStack justifyContent="space-between" alignItems="center">
+                      <Text>{order.menuItem?.description} - Status: {order.status}</Text>
+                      <Button
+                        size="$2"
+                        theme="green"
+                        onPress={() => markAsDeliveredMutation.mutate(order.id)}
+                        disabled={markAsDeliveredMutation.isPending}
+                      >
+                        {markAsDeliveredMutation.isPending ? "Entregando..." : "Marcar como entregue"}
+                      </Button>
+                    </XStack>
+                  </Card.Header>
+                  <Card.Footer padded backgroundColor="$gray3">
+                    <XStack justifyContent="space-between" alignItems="center">
+                      <Text fontSize="$3" color="$gray11">Status: </Text>
+                      <XStack
+                        backgroundColor={getColorByStatus(order.status).bg}
+                        paddingHorizontal="$2"
+                        paddingVertical="$1"
+                        borderRadius="$4"
+                      >
+                        <Text
+                          fontSize="$2"
+                          color={getColorByStatus(order.status).text}
+                        >
+                          {getLabelByStatus(order.status)}
+                        </Text>
+                      </XStack>
+                    </XStack>
+                  </Card.Footer>
+                </Card>
+              ))}
+            </ScrollView>
           </YStack>
         </Card>
 
         <Card bordered size="$4">
           <Card.Header padded>
-            <Text fontSize="$6" fontWeight="$14">Production Orders ({pendingProductionOrders.length})</Text>
+            <Text fontSize="$6" fontWeight="$14">Outras ordens de produção ({productionOrders?.filter(order => order.status !== ProductionOrderStatus.PENDING).length || 0})</Text>
           </Card.Header>
           <Separator />
           <YStack padding="$2" gap="$2">
-            {pendingProductionOrders.map((order) => (
-              <Card key={order.id} bordered size="$4">
-                <Card.Header padded>
-                  <XStack gap="$3" alignItems="center">
-                    <Image
-                      source={{ uri: order.menuItem?.imageUrl || DEFAULT_IMAGE }}
-                      width={50}
-                      height={50}
-                      borderRadius={8}
-                    />
-                    <YStack flex={1}>
-                      <Text fontWeight="bold">{order.menuItem?.description}</Text>
-                      <XStack justifyContent="space-between" alignItems="center">
-                        <Text fontSize="$3" color="$gray11">Order <Text fontWeight="bold">#{order.orderId.slice(0, 8)}</Text></Text>
-                        <XStack
-                          backgroundColor={order.type === "KITCHEN" ? "$orange4" : "$blue4"}
-                          paddingHorizontal="$2"
-                          paddingVertical="$1"
-                          borderRadius="$4"
+            <ScrollView maxHeight={300}>
+              {productionOrders?.filter(order => order.status !== ProductionOrderStatus.PENDING).map((order) => (
+                <Card key={order.id} bordered size="$4">
+                  <Card.Header padded>
+                    <XStack justifyContent="space-between" alignItems="center">
+                      <Text>{order.menuItem?.description} - Status: {order.status}</Text>
+                      {order.status === "COMPLETED" && (
+                        <Button
+                          size="$2"
+                          theme="green"
+                          onPress={() => markAsDeliveredMutation.mutate(order.id)}
+                          disabled={markAsDeliveredMutation.isPending}
                         >
-                          <Text
-                            fontSize="$2"
-                            color={order.type === "KITCHEN" ? "$orange10" : "$blue10"}
-                          >
-                            {order.type}
-                          </Text>
-                        </XStack>
-                      </XStack>
-                    </YStack>
-                  </XStack>
-                </Card.Header>
-                <Card.Footer padded backgroundColor="$gray3">
-                  <XStack justifyContent="space-between" alignItems="center">
-                    <Text fontSize="$3" color="$gray11">Status: </Text>
-                    <XStack
-                      backgroundColor={
-                        order.status === "CANCELLED" ? "$red4" :
-                          order.status === "PENDING" ? "$yellow4" :
-                            order.status === "IN_PROGRESS" ? "$blue4" : "$green4"
-                      }
-                      paddingHorizontal="$2"
-                      paddingVertical="$1"
-                      borderRadius="$4"
-                    >
-                      <Text
-                        fontSize="$2"
-                        color={
-                          order.status === "CANCELLED" ? "$red10" :
-                            order.status === "PENDING" ? "$yellow10" :
-                              order.status === "IN_PROGRESS" ? "$blue10" : "$green10"
-                        }
-                      >
-                        {order.status}
-                      </Text>
+                          {markAsDeliveredMutation.isPending ? "Delivering..." : "Mark as Delivered"}
+                        </Button>
+                      )}
                     </XStack>
-                  </XStack>
-                </Card.Footer>
-              </Card>
-            ))}
+                  </Card.Header>
+                  <Card.Footer padded backgroundColor="$gray3">
+                    <XStack justifyContent="space-between" alignItems="center">
+                      <Text fontSize="$3" color="$gray11">Status: </Text>
+                      <XStack
+                        backgroundColor={getColorByStatus(order.status).bg}
+                        paddingHorizontal="$2"
+                        paddingVertical="$1"
+                        borderRadius="$4"
+                      >
+                        <Text
+                          fontSize="$2"
+                          color={getColorByStatus(order.status).text}
+                        >
+                          {getLabelByStatus(order.status)}
+                        </Text>
+                      </XStack>
+                    </XStack>
+                  </Card.Footer>
+                </Card>
+              ))}
+            </ScrollView>
           </YStack>
         </Card>
       </ScrollView>
-    </YStack>
+    </YStack >
   );
 }

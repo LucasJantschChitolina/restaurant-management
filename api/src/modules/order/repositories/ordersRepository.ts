@@ -53,3 +53,7 @@ export const listOrders = async () => {
 export const getWaiterById = async (id: string) => {
   return await User.findByPk(id);
 };
+
+export const listOrdersByStatus = async (status: OrderStatus) => {
+  return await Order.findAll({ where: { status } });
+};

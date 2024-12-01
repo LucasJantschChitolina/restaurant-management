@@ -7,6 +7,8 @@ import {
   updateProductionOrderController,
   deleteProductionOrderController,
   listProductionOrdersController,
+  listProductionOrdersByStatusController,
+  markAsDeliveredController,
 } from '../controllers/productionOrderController';
 
 import { validateRequest } from "../../../middlewares/validation";
@@ -30,5 +32,7 @@ router.get('/', listProductionOrdersController);
 router.get('/:id', getProductionOrderController);
 router.put('/:id', validateRequest(updateProductionOrderSchema), updateProductionOrderController);
 router.delete('/:id', deleteProductionOrderController);
+router.get('/status/:status', listProductionOrdersByStatusController);
+router.patch('/:id/delivered', markAsDeliveredController);
 
 export default router;
