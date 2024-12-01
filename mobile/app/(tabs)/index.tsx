@@ -5,8 +5,8 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Button, Card, ScrollView, Separator, Spinner, Text, XStack, YStack } from 'tamagui';
 import { useSession } from '../context';
-
-const API_URL = process.env.API_URL || "http://localhost:4000";
+import { getColorByStatus, getLabelByStatus } from '@/utils/status';
+import { API_URL } from '@/config/api';
 
 enum ProductionOrderStatus {
   PENDING = 'PENDING',
@@ -195,7 +195,7 @@ export default function HomeScreen() {
       <ScrollView>
         <Card bordered size="$4" marginBottom="$4">
           <Card.Header padded>
-            <Text fontSize="$6" fontWeight="$14">Ongoing Orders ({orders?.length || 0})</Text>
+            <Text fontSize="$6" fontWeight="$14">Comandas Abertas ({orders?.length || 0})</Text>
           </Card.Header>
           <Separator />
           <YStack padding="$2" gap="$2">
@@ -206,11 +206,11 @@ export default function HomeScreen() {
                     <XStack justifyContent="space-between" alignItems="center">
                       <XStack alignItems="center" gap="$2">
                         <Ionicons name="restaurant-outline" size={24} color="#666" />
-                        <Text>Table {order.tableNumber} - <Text fontWeight="bold">#{order.id.slice(0, 8)}</Text></Text>
+                        <Text>Mesa {order.tableNumber} - <Text fontWeight="bold">#{order.id.slice(0, 8)}</Text></Text>
                       </XStack>
                       <Text>R$ {order.totalAmount || '0.00'}</Text>
                       <Button onPress={() => handleCloseOrder(order.id)} disabled={closeOrderMutation.isPending}>
-                        {closeOrderMutation.isPending ? "Closing..." : "Close Order"}
+                        {closeOrderMutation.isPending ? "Fechando..." : "Fechar comanda"}
                       </Button>
 
                       <Text>{order.status}</Text>
@@ -233,7 +233,7 @@ export default function HomeScreen() {
 
         <Card bordered size="$4" marginBottom="$4">
           <Card.Header padded>
-            <Text fontSize="$6" fontWeight="$14">Pending Production Orders ({pendingProductionOrders?.length || 0})</Text>
+            <Text fontSize="$6" fontWeight="$14">Ordens de produção pendentes({pendingProductionOrders?.length || 0})</Text>
           </Card.Header>
           <Separator />
           <YStack padding="$2" gap="$2">
@@ -249,7 +249,7 @@ export default function HomeScreen() {
                         onPress={() => markAsDeliveredMutation.mutate(order.id)}
                         disabled={markAsDeliveredMutation.isPending}
                       >
-                        {markAsDeliveredMutation.isPending ? "Delivering..." : "Mark as Delivered"}
+                        {markAsDeliveredMutation.isPending ? "Entregando..." : "Marcar como entregue"}
                       </Button>
                     </XStack>
                   </Card.Header>
@@ -257,28 +257,16 @@ export default function HomeScreen() {
                     <XStack justifyContent="space-between" alignItems="center">
                       <Text fontSize="$3" color="$gray11">Status: </Text>
                       <XStack
-                        backgroundColor={
-                          order.status === "CANCELLED" ? "$red4" :
-                            order.status === "PENDING" ? "$yellow4" :
-                              order.status === "IN_PROGRESS" ? "$blue4" :
-                                order.status === "DELIVERED" ? "$purple4" :
-                                  "$green4"
-                        }
+                        backgroundColor={getColorByStatus(order.status).bg}
                         paddingHorizontal="$2"
                         paddingVertical="$1"
                         borderRadius="$4"
                       >
                         <Text
                           fontSize="$2"
-                          color={
-                            order.status === "CANCELLED" ? "$red10" :
-                              order.status === "PENDING" ? "$yellow10" :
-                                order.status === "IN_PROGRESS" ? "$blue10" :
-                                  order.status === "DELIVERED" ? "$purple10" :
-                                    "$green10"
-                          }
+                          color={getColorByStatus(order.status).text}
                         >
-                          {order.status}
+                          {getLabelByStatus(order.status)}
                         </Text>
                       </XStack>
                     </XStack>
@@ -291,7 +279,7 @@ export default function HomeScreen() {
 
         <Card bordered size="$4">
           <Card.Header padded>
-            <Text fontSize="$6" fontWeight="$14">Other Production Orders ({productionOrders?.filter(order => order.status !== ProductionOrderStatus.PENDING).length || 0})</Text>
+            <Text fontSize="$6" fontWeight="$14">Outras ordens de produção ({productionOrders?.filter(order => order.status !== ProductionOrderStatus.PENDING).length || 0})</Text>
           </Card.Header>
           <Separator />
           <YStack padding="$2" gap="$2">
@@ -317,28 +305,16 @@ export default function HomeScreen() {
                     <XStack justifyContent="space-between" alignItems="center">
                       <Text fontSize="$3" color="$gray11">Status: </Text>
                       <XStack
-                        backgroundColor={
-                          order.status === "CANCELLED" ? "$red4" :
-                            order.status === "PENDING" ? "$yellow4" :
-                              order.status === "IN_PROGRESS" ? "$blue4" :
-                                order.status === "DELIVERED" ? "$purple4" :
-                                  "$green4"
-                        }
+                        backgroundColor={getColorByStatus(order.status).bg}
                         paddingHorizontal="$2"
                         paddingVertical="$1"
                         borderRadius="$4"
                       >
                         <Text
                           fontSize="$2"
-                          color={
-                            order.status === "CANCELLED" ? "$red10" :
-                              order.status === "PENDING" ? "$yellow10" :
-                                order.status === "IN_PROGRESS" ? "$blue10" :
-                                  order.status === "DELIVERED" ? "$purple10" :
-                                    "$green10"
-                          }
+                          color={getColorByStatus(order.status).text}
                         >
-                          {order.status}
+                          {getLabelByStatus(order.status)}
                         </Text>
                       </XStack>
                     </XStack>

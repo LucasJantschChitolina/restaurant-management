@@ -6,8 +6,7 @@ import { useSession } from "../context";
 import OrderSummary from "@/components/OrderSummary";
 import MenuItemComponent from "@/components/MenuItemComponent";
 import AppButton from "@/components/AppButton";
-
-const API_URL = process.env.API_URL || "http://localhost:4000";
+import { API_URL } from "@/config/api";
 
 export interface MenuItem {
   id: string;

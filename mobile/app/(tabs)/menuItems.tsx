@@ -3,8 +3,7 @@ import { Button, Input, Text, YStack, ScrollView, Image, ToggleGroup, styled, Sp
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "../context";
 import AppButton from "@/components/AppButton";
-
-const API_URL = process.env.API_URL || "http://localhost:4000";
+import { API_URL } from "@/config/api";
 
 const fetchMenuItems = async ({ token }: { token?: string | null }) => {
   const response = await fetch(`${API_URL}/menu-item`, {
