@@ -28,11 +28,6 @@ interface CreateOrderData {
   waiterId: string;
 }
 
-interface User {
-  id: string;
-  // ... other user properties
-}
-
 const fetchMenuItems = async ({ token }: { token?: string | null }): Promise<MenuItem[]> => {
   const response = await fetch(`${API_URL}/menu-item`, {
     method: "GET",
