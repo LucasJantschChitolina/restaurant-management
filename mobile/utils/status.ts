@@ -2,6 +2,14 @@ const getLabelByStatus = (status: string): string => {
   return status.replace(/_/g, ' ').charAt(0) + status.slice(1).toLowerCase();
 };
 
+const convertStatusToLabel = (status: string) => {
+  if (status === "PENDING") return "Pendente";
+  if (status === "IN_PROGRESS") return "Em produção";
+  if (status === "CANCELLED") return "Cancelado";
+  if (status === "COMPLETED") return "Pronto";
+  if (status === "DELIVERED") return "Entregue";
+}
+
 const getColorByStatus = (status: string): { bg: string, text: string } => {
   switch (status) {
     case 'CANCELLED':
@@ -17,4 +25,4 @@ const getColorByStatus = (status: string): { bg: string, text: string } => {
   }
 };
 
-export { getLabelByStatus, getColorByStatus };
+export { getLabelByStatus, getColorByStatus, convertStatusToLabel };
