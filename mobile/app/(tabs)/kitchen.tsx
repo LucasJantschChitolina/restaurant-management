@@ -3,7 +3,7 @@ import { Card, ScrollView, Separator, Spinner, Text, YStack, XStack, Image, Butt
 import { useSession } from '../context';
 import { useState } from 'react';
 import { convertStatusToLabel, getColorByStatus } from '@/utils/status';
-const API_URL = process.env.API_URL || "http://localhost:4000";
+import { API_URL } from '@/config/api';
 
 const DEFAULT_IMAGE = "https://media.istockphoto.com/id/520410807/photo/cheeseburger.jpg?s=612x612&w=0&k=20&c=fG_OrCzR5HkJGI8RXBk76NwxxTasMb1qpTVlEM0oyg4=";
 

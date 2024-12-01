@@ -3,7 +3,7 @@ import { Text, YStack, Spinner, Card, ScrollView, Separator, XStack, Image, Butt
 import { useSession } from '../context';
 import { useState } from 'react';
 import { convertStatusToLabel, getColorByStatus } from '@/utils/status';
-const API_URL = process.env.API_URL || "http://localhost:4000";
+import { API_URL } from '@/config/api';
 
 interface MenuItem {
   id: string;
