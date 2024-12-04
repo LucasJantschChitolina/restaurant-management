@@ -17,18 +17,54 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: '',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+            <TabBarIcon name={focused ? 'home' : 'home-outline'} color='#D73035' />
           ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="order"
         options={{
-          title: 'Explore',
+          title: '',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+            <TabBarIcon name={focused ? 'cart' : 'cart-outline'} color='#D73035' />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="menuItems"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'grid' : 'grid-outline'} color='#D73035' />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="kitchen"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'restaurant' : 'restaurant-outline'} color='#D73035' />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="drinks"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'beer' : 'beer-outline'} color='#D73035' />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="reports"
+        options={{
+          title: '',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'bar-chart' : 'bar-chart-outline'} color='#D73035' />
           ),
         }}
       />
