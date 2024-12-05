@@ -122,6 +122,7 @@ function Kitchen() {
     try {
       await updateProductionOrderStatus(orderId, newStatus, session);
       queryClient.invalidateQueries({ queryKey: ["productionOrders"] });
+      queryClient.invalidateQueries({ queryKey: ["pendingProductionOrders"] });
     } catch (error) {
       console.error("Error updating status:", error);
     }

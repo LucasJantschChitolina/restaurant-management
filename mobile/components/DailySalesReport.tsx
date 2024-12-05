@@ -17,6 +17,14 @@ interface SalesReportProps {
   handleNextDay: () => void;
 }
 
+const translateCategory = (category: string) => {
+  if (category === 'FOOD') {
+    return 'COMIDA';
+  } else if (category === 'DRINK') {
+    return 'BEBIDA';
+  }
+}
+
 const DailySalesReport: React.FC<SalesReportProps> = ({
   date,
   totalOrders,
@@ -101,12 +109,14 @@ const DailySalesReport: React.FC<SalesReportProps> = ({
                     <XStack justifyContent="space-between" alignItems="center">
                       <YStack gap="$1">
                         <Text fontWeight="$12" color="$gray12">{item.description}</Text>
-                        <Text fontSize="$3" color="$gray11" style={{ width: 'fit-content', borderRadius: 20, paddingLeft: 8, paddingRight: 8, paddingTop: 2, paddingBottom: 2, backgroundColor: item.category === 'FOOD' ? '#D73035' : '#4d39f', color: '#fff' }}>{item.category.toLocaleLowerCase()}</Text>
+                        <Text fontSize="$3" color="$gray11" style={{ width: 'fit-content', borderRadius: 20, paddingLeft: 8, paddingRight: 8, paddingTop: 2, paddingBottom: 2, backgroundColor: '#D73035', color: '#fff' }}>
+                          {translateCategory(item.category)}
+                        </Text>
                       </YStack>
                     </XStack>
                   </Card.Header>
                   <Card.Footer padded backgroundColor="$gray3">
-                    <Text fontSize="$3" color="$gray11">
+                    <Text fontSize="$3" color="$gray11" fontWeight="$12">
                       Quantidade vendida: {item.quantity}
                     </Text>
                   </Card.Footer>
