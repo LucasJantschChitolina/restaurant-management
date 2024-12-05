@@ -209,7 +209,7 @@ export default function HomeScreen() {
                         <Ionicons name="restaurant-outline" size={24} color="#666" />
                         <Text>Mesa {order.tableNumber} - <Text fontWeight="bold">#{order.id.slice(0, 8)}</Text></Text>
                       </XStack>
-                      <Text>R$ {order.totalAmount || '0.00'}</Text>
+                      <Text>R$ {Number(order.totalAmount).toFixed(2) || '0.00'}</Text>
                       <Text>{convertStatusToLabel(order.status)}</Text>
                     </XStack>
                   </Card.Header>
